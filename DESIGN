@@ -1,0 +1,54 @@
+Archery in an Hour™
+==================
+By Team Stanislav: Ely Sandine, Wilson Berkow, Christopher Sherling
+
+-------------------------------------------------------
+Description:
+-------------------------------------------------------
+This project is a game of archery, extending across a full row of 6 computers. Two players will control two archers and try to fire arrows at each other. The arrows will fly from screen to screen, and the first player to hit the other wins.
+
+The graphics will be text-based, within terminals.
+
+The game will be turn-based but after we get that down, we’ll make it real-time if we still have time.
+
+-------------------------------------------------------
+UI:
+-------------------------------------------------------
+Players will be on opposite sides of computer rows and arrows will fly between computer screens in the row.
+They will use WASD keys to move their characters, and the mouse for targeting and shot power.
+A computer will also be used to show current and past match results.
+
+-------------------------------------------------------
+Technical Design:
+-------------------------------------------------------
+	Class Topics:
+		Networking and Pipes (Sockets):
+Computers will have to communicate with each other to support the animations of arrows going across the screen
+		Processes/forking:
+			Starting processes on remote machines (which will display the terrain and players)
+		
+		Signals:
+Save and exit signal that would make sure all files are written, the close all files, pipes, sockets, and exit.
+Gradual fork bomb signal (a special attack to slow down rendering on the screen your opponent is currently on)
+File I/O: results of matches will be stored to a file, as well as the players’ actions, to allow for match replays
+	Responsibilities:
+		Networking -- Chris
+		User interface (graphics + event loop)  -- Wilson
+		Game controls (keyboard and mouse) -- Wilson
+		Physics -- Ely
+		“Map” creation (terrain and players’ location data), manipulation functions -- Ely
+		Saving and replaying of games -- Chris
+	Algorithms:
+		Terrain generation: generate an array of Y-positions representing the height of the ground, such that each deviates from the previous and next by no more than a given amount.
+Realistic Physics: Accounts for gravity, as well as windspeed/direction
+
+-------------------------------------------------------
+Timeline:
+-------------------------------------------------------
+1/12 - Deployment of display processes to machines
+1/14 - Terrain generation and physics algorithms
+1/15 - User interface: drawing components of game
+1/17 - Gameplay prototype
+1/21 - File saving, game record display and game recording replays
+Beyond - Enhancements: real-time playing, and the forkbomb powerup
+
