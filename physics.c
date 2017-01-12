@@ -1,7 +1,9 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include "physics.h"
+
 #define PLAYER_HEIGHT 5
 //struct arrow has initial velocity and angle, and current coordinates
-typedef struct arrow{float velocity; float theta; float x; float y;}arrow;
-typedef struct player{char health; float xcor;}player;
 
 /*Params:
  p: player who is shooting the arrow
@@ -15,9 +17,9 @@ char shoot(player *shooter, player *target, float v, float theta){
   float arrow_y = PLAYER_HEIGHT;
   while(arrow_y>=0){
     if(v>0){
-      if(arrow_x>=target->x){
+      if(arrow_x>=target->xcor){
 	if(arrow_y<=PLAYER_HEIGHT){
-	  kill(*target);
+	  kill(target);
 	  return 1;
 	}else{
 	  overshoot(arrow_y);
@@ -25,9 +27,9 @@ char shoot(player *shooter, player *target, float v, float theta){
 	}
       }
     }else{
-      if(arrow_x<=target->x){
+      if(arrow_x<=target->xcor){
 	if(arrow_y<=PLAYER_HEIGHT){
-	  kill(*target);
+	  kill(target);
 	  return 1;
 	}else{
 	  return 0;
@@ -35,6 +37,7 @@ char shoot(player *shooter, player *target, float v, float theta){
       }
     }
   }
+  undershoot(target->xcor-arrow_x);
   return 0;
 }
 
