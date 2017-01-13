@@ -74,5 +74,12 @@ int main(){
   player p2;
   p2.xcor = 100;
   p2.health = 1;
+  int going = 0;
+  float theta = M_PI/2;
+  while(!going){
+    printf("Theta: %f\n",theta);
+    going=shoot(&p1, &p2, 40, theta);
+    theta-=.01;
+  }
   return 0;
 }
