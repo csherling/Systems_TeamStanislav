@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 #include "physics.h"
 
 #define PLAYER_HEIGHT 5
@@ -75,11 +76,17 @@ int main(){
   p2.xcor = 100;
   p2.health = 1;
   int going = 0;
-  float theta = M_PI/2;
+  char input[10];
+  char* theta;
+  char velocity[10];
   while(!going){
-    printf("Theta: %f\n",theta);
-    going=shoot(&p1, &p2, 40, theta);
-    theta-=.01;
+    printf("Enter Shot:\n");
+    fgets(input, 10, stdin);
+    *strstr(input, "\n")=0;
+    theta=input;
+    strcpy(velocity,strsep(&theta, ","));
+    printf("Velocity: %s\nTheta: %s\n",velocity, theta);
+    going=shoot(&p1, &p2, atof(velocity), atof(theta));
   }
   return 0;
 }
