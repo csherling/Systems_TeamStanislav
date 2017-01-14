@@ -18,10 +18,14 @@
 char shoot(player *shooter, player *target, float v, float theta){
   float arrow_x=shooter->xcor;
   float arrow_y = PLAYER_HEIGHT;
-  processCor(arrow_x,arrow_y);
-  float vx = v*cos(theta)/100;
+  float vx = v*cos(theta);
   float vy = v*sin(theta)/100;
+  float t = 0;
   while(arrow_y>=0){
+    //Movements
+    arrow_x=v*cos(theta)*t+shooter->xcor;
+    arrow_y=PLAYER_HEIGHT+v*sin(theta)*t-.5*GRAVITY*t*t;
+    processCor(arrow_x, arrow_y);
     //Checks for collisions and if it has hit player
     if(v>0){
       if(arrow_x>=target->xcor){
@@ -38,11 +42,7 @@ char shoot(player *shooter, player *target, float v, float theta){
 	}
       }
     }
-    //Movements
-    arrow_x+=vx;
-    arrow_y+=vy;
-    vy-=GRAVITY/10000;
-    processCor(arrow_x, arrow_y);
+    t+=.01;
   }
   if(arrow_x>target->xcor){
     overshoot(arrow_x-target->xcor);
