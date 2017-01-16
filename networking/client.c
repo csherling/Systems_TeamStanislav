@@ -17,20 +17,24 @@ int main( int argc, char *argv[] ) {
   
   int sd;
 
-  sd = client_connect( host );
+  sd = client_connect( host, atoi(argv[2]) );
 
   char buffer[MESSAGE_BUFFER_SIZE];
+
+  sleep(5);
+  sleep(5);
   
-  while (1) {
+  read( sd, buffer, sizeof(buffer));
     /* printf("enter message: "); */
     /* fgets( buffer, sizeof(buffer), stdin ); */
     /* char *p = strchr(buffer, '\n'); */
     /* *p = 0; */
   
     /* write( sd, buffer, sizeof(buffer) ); */
-    read( sd, buffer, sizeof(buffer) );
-    printf( "received: %s\n", buffer );
-  }
+
+  printf( "received: %s\n", buffer );
+  fflush(stdout);
+
   
   return 0;
 }
