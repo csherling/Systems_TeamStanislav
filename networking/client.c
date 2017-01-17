@@ -24,16 +24,31 @@ int main( int argc, char *argv[] ) {
   sleep(5);
   sleep(5);
   
-  read( sd, buffer, sizeof(buffer));
-  printf( "received: %s\n", buffer );
-    printf("enter message: ");
-    fgets( buffer, sizeof(buffer), stdin );
-    char *p = strchr(buffer, '\n');
-    *p = 0;
-  
-    write( sd, buffer, sizeof(buffer) );
+  while(1){
+    while(read( sd, buffer, sizeof(buffer))){
+      printf( "received: %s\n", buffer );
+      /* printf("enter message: "); */
+      /* fgets( buffer, sizeof(buffer), stdin ); */
+      /* char *p = strchr(buffer, '\n'); */
+      /* *p = 0; */
+      
+      /* write( sd, buffer, sizeof(buffer) ); */
+    }
+
+    /* if(write(sd, buffer, sizeof(buffer) == -1){ */
+    /* 	printf("do you want to continue?: "); */
+    /* 	fgets( buffer, sizeof(buffer), stdin ); */
+    /* 	char *p = strchr(buffer, '\n'); */
+    /* 	*p = 0;	 */
+    /*   } */
 
 
+    /* printf("enter message: "); */
+    /* fgets( buffer, sizeof(buffer), stdin ); */
+    /* char *p = strchr(buffer, '\n'); */
+    /* *p = 0; */
+     
+  }
 
 
   

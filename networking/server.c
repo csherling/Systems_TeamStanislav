@@ -62,11 +62,11 @@ int main() {
       exit(0);
     }
     else {
-      sleep(20);
-      close( connection[0] );
-      close( connection[1] );
-      sleep(10);
-      exit(0);
+      /* sleep(20); */
+      /* close( connection[0] ); */
+      /* close( connection[1] ); */
+      /* sleep(10); */
+      /* exit(0); */
     }
     
 
