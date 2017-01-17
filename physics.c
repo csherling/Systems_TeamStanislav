@@ -7,10 +7,9 @@
 #define PLAYER_HEIGHT 5
 #define PLAYER_WIDTH 3
 #define GRAVITY 9.8
-//struct arrow has initial velocity and angle, and current coordinates
-
 /*Params:
- p: player who is shooting the arrow
+ shooter: pointer to the player who is shooting the arrow
+ target: point to the player who is being shot at
  v: initial velocity positive and negative
  Returns:
  1-Hit
@@ -19,13 +18,11 @@
 char shoot(player *shooter, player *target, float v, float theta){
   float arrow_x=shooter->xcor;
   float arrow_y = PLAYER_HEIGHT;
-  float vx = v*cos(theta);
-  float vy = v*sin(theta)/100;
   float t = 0;
   while(arrow_y>=0){
     //Movements
     arrow_x=v*cos(theta)*t+shooter->xcor;
-    arrow_y=PLAYER_HEIGHT+v*sin(theta)*t-.5*GRAVITY*t*t;
+    arrow_y=PLAYER_HEIGHT+abs(v*sin(theta)*t)-.5*GRAVITY*t*t;
     processCor(arrow_x, arrow_y);
     //Checks for collisions and if it has hit player
     if(v>0){
@@ -54,6 +51,7 @@ char shoot(player *shooter, player *target, float v, float theta){
 }
 
 void processCor(float x, float y){
+  printf("(%f,%f)\n",x,y);
 }
 
 void kill(player *p){
@@ -87,7 +85,14 @@ int main(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     printf("Velocity: %s\nTheta: %s\n",velocity, theta);
-    going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180);
+    char c = 0;
+    if(c){
+      going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180);
+      c=1;
+    }else{
+      going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
+      c=0;
+    }
   }
   return 0;
 }
