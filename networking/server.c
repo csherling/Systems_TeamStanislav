@@ -51,16 +51,18 @@ int main() {
       //      close(sd[0]);
       sub_server( connection[0], buffer, sizeof(buffer) );
       sleep(10);
+      close(sd[0]);
       exit(0);
     }
-    if ( clients[0] == 0 ) {      
+    if ( clients[1] == 0 ) {      
       //      close(sd[1]);
       sub_server( connection[1], buffer, sizeof(buffer) );
       sleep(10);
+      close(sd[1]);
       exit(0);
     }
     else {
-      sleep(10);
+      sleep(20);
       close( connection[0] );
       close( connection[1] );
       sleep(10);
