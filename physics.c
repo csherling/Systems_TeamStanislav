@@ -5,6 +5,7 @@
 #include "physics.h"
 
 #define PLAYER_HEIGHT 5
+#define PLAYER_WIDTH 3
 #define GRAVITY 9.8
 //struct arrow has initial velocity and angle, and current coordinates
 
@@ -28,14 +29,14 @@ char shoot(player *shooter, player *target, float v, float theta){
     processCor(arrow_x, arrow_y);
     //Checks for collisions and if it has hit player
     if(v>0){
-      if(arrow_x>=target->xcor){
+      if(arrow_x>=target->xcor&&arrow_x<=target->xcor+PLAYER_WIDTH){
 	if(arrow_y<=PLAYER_HEIGHT){
 	  kill(target);
 	  return 1;
 	}
       }
     }else{
-      if(arrow_x<=target->xcor){
+      if(arrow_x<=target->xcor&&arrow_x>=target->xcor-PLAYER_WIDTH){
 	if(arrow_y<=PLAYER_HEIGHT){
 	  kill(target);
 	  return 1;
@@ -45,15 +46,14 @@ char shoot(player *shooter, player *target, float v, float theta){
     t+=.01;
   }
   if(arrow_x>target->xcor){
-    overshoot(arrow_x-target->xcor);
+    overshoot(abs(arrow_x-target->xcor));
   }else{
-    undershoot(target->xcor-arrow_x);
+    undershoot(abs(target->xcor-arrow_x));
   }
   return 0;
 }
 
 void processCor(float x, float y){
-  printf("(%f,%f)\n",x,y);
 }
 
 void kill(player *p){
