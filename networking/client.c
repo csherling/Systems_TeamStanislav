@@ -8,11 +8,11 @@
 int main( int argc, char *argv[] ) {
 
   char *host;
-  if (argc != 2 ) {
-    printf("host not specified, conneting to 127.0.0.1\n");
-    host = "127.0.0.1";
-  }
-  else
+  /* if (argc != 2 ) { */
+  /*   printf("host not specified, conneting to 127.0.0.1\n"); */
+  /*   host = "127.0.0.1"; */
+  /* } */
+  /* else */
     host = argv[1];
   
   int sd;
@@ -25,6 +25,7 @@ int main( int argc, char *argv[] ) {
   sleep(5);
   
   read( sd, buffer, sizeof(buffer));
+  printf( "received: %s\n", buffer );
     printf("enter message: ");
     fgets( buffer, sizeof(buffer), stdin );
     char *p = strchr(buffer, '\n');
@@ -32,7 +33,7 @@ int main( int argc, char *argv[] ) {
   
     write( sd, buffer, sizeof(buffer) );
 
-  printf( "received: %s\n", buffer );
+
 
 
   
