@@ -60,6 +60,7 @@ int main() {
       exit(0);
     }
     else {
+      sleep(10);
       close( connection[0] );
       close( connection[1] );
       sleep(10);
@@ -100,8 +101,12 @@ int main() {
 
 
 void sub_server( int sd, char buffer[], int sbuff ) {
-    write( sd, buffer, sbuff);    
-  
+  printf("GOT HERE\n");
+  fflush(stdout);
+  write( sd, buffer, sbuff);    
+  read( sd, buffer, sbuff);
+  printf( "received: %s\n", buffer );
+  fflush(stdout);
 }
 void process( char * s ) {
 

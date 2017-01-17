@@ -25,15 +25,15 @@ int main( int argc, char *argv[] ) {
   sleep(5);
   
   read( sd, buffer, sizeof(buffer));
-    /* printf("enter message: "); */
-    /* fgets( buffer, sizeof(buffer), stdin ); */
-    /* char *p = strchr(buffer, '\n'); */
-    /* *p = 0; */
+    printf("enter message: ");
+    fgets( buffer, sizeof(buffer), stdin );
+    char *p = strchr(buffer, '\n');
+    *p = 0;
   
-    /* write( sd, buffer, sizeof(buffer) ); */
+    write( sd, buffer, sizeof(buffer) );
 
   printf( "received: %s\n", buffer );
-  fflush(stdout);
+
 
   
   return 0;
