@@ -15,16 +15,20 @@
  1-Hit
  0-Miss
  */
-char shoot(player *shooter, player *target, float v, float theta){
-  float arrow_x=shooter->xcor;
-  float arrow_y = PLAYER_HEIGHT;
-  float t = 0;
+char shoot(player *shooter, player *target, double v, double theta){
+  double arrow_x=shooter->xcor;
+  double arrow_y = PLAYER_HEIGHT;
+  double t = 0;
+  double vx = v*sin(theta);
+  double vy = abs(v*cos(theta));
   while(arrow_y>=0){
     //Movements
-    arrow_x=v*cos(theta)*t+shooter->xcor;
-    arrow_y=PLAYER_HEIGHT+abs(v*sin(theta)*t)-.5*GRAVITY*t*t;
+    vy-=GRAVITY*t;
+    arrow_x+=vx*t;
+    arrow_y+=vy*t;
+    printf("arrow_y: %f\n", arrow_y);
     processCor(arrow_x, arrow_y);
-    //Checks for collisions and if it has hit player
+    //printf("Time: %f\n", t);
     if(v>0){
       if(arrow_x>=target->xcor&&arrow_x<=target->xcor+PLAYER_WIDTH){
 	if(arrow_y<=PLAYER_HEIGHT){
@@ -42,7 +46,7 @@ char shoot(player *shooter, player *target, float v, float theta){
     }
     t+=.01;
   }
-  if(arrow_x>target->xcor){
+  if(abs(arrow_x)>abs(target->xcor)){
     overshoot(abs(arrow_x-target->xcor));
   }else{
     undershoot(abs(target->xcor-arrow_x));
@@ -50,7 +54,7 @@ char shoot(player *shooter, player *target, float v, float theta){
   return 0;
 }
 
-void processCor(float x, float y){
+void processCor(double x, double y){
   printf("(%f,%f)\n",x,y);
 }
 
