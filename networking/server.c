@@ -10,7 +10,49 @@ void sub_server( int sd, char buffer[], int sbuff );
 
 int main() {
 
-  int sd[0];
+  int consd[2];
+  int conconnection[2];
+  int conclient[2];
+  char numplayers[10];
+
+  consd[0] = 0;
+  consd[1] = 0;
+  conconnection[0] = 0;
+  conconnection[1] = 0;
+  conclient[0] = 0;
+  conclient[1] = 0;
+
+  while(1){
+    printf("how many players are playing? (1/2): \n");
+    fgets( numplayers, sizeof(numplayers), stdin );
+    char *nt = strchr(numplayers, '\n');
+    *nt = 0;
+    short numplz = atoi(numplayers);
+    if(numplz == 1){
+      printf("Initiating 1 player mode. Please connect a controlling device.\n");
+      consd[0] = server_setup(9000);
+      conconnection[0] = server_connect( consd[0] );
+      printf("Player controller connected!\n");
+      break;
+    }
+    else if(numplz == 2){
+      printf("Initiating 2 player mode. Please connect a controlling device.\n");
+      consd[0] = server_setup(9000);
+      conconnection[0] = server_connect( consd[0] );
+      printf("Player 1 controller connected!\n");
+      consd[1] = server_setup(9001);
+      conconnection[1] = server_connect( consd[1] );
+      printf("Player 2 controller connected!\n");
+      break;
+    }
+    else{
+      printf("Please Re-enter an allowed number.\n");
+    }
+  }//specify amount of players and initiate connections.
+    
+  printf("Initiating display connection\n");
+  fflush(stdout);
+  int sd[2];
   int connection[2];
 
   sd[0] = 0;
@@ -29,11 +71,12 @@ int main() {
     buffer[i] = 0;
   }
 
-  sd[0] = server_setup(9001);
+  sd[0] = server_setup(9002);
   connection[0] = server_connect( sd[0] );
-  sd[1] = server_setup(9002);
+  printf("display 1 connected\n");
+  sd[1] = server_setup(9003);
   connection[1] = server_connect( sd[1] );
-
+  printf("display 2 connected\n");
     
   while (1) {
     
