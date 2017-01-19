@@ -18,17 +18,14 @@
 char shoot(player *shooter, player *target, double v, double theta){
   double arrow_x=shooter->xcor;
   double arrow_y = PLAYER_HEIGHT;
-  double t = 0;
   double vx = v*sin(theta);
   double vy = abs(v*cos(theta));
   while(arrow_y>=0){
     //Movements
-    vy-=GRAVITY*t;
-    arrow_x+=vx*t;
-    arrow_y+=vy*t;
-    printf("arrow_y: %f\n", arrow_y);
-    processCor(arrow_x, arrow_y);
-    //printf("Time: %f\n", t);
+    vy-=GRAVITY*.01;
+    arrow_x+=vx*.01;
+    arrow_y+=vy*.01;
+    processCor(arrow_x, arrow_y,atan2(vy, vx));
     if(v>0){
       if(arrow_x>=target->xcor&&arrow_x<=target->xcor+PLAYER_WIDTH){
 	if(arrow_y<=PLAYER_HEIGHT){
@@ -54,8 +51,8 @@ char shoot(player *shooter, player *target, double v, double theta){
   return 0;
 }
 
-void processCor(double x, double y){
-  printf("(%f,%f)\n",x,y);
+void processCor(double x, double y, double theta){
+  printf("(%f,%f) Angle: %f\n",x,y,theta);
 }
 
 void kill(player *p){
@@ -89,14 +86,14 @@ int main(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     printf("Velocity: %s\nTheta: %s\n",velocity, theta);
-    char c = 0;
-    if(c){
+    //char c = 0;
+    //if(c){
       going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180);
-      c=1;
-    }else{
-      going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
-      c=0;
-    }
+      //c=1;
+      //}else{
+      //going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
+      //c=0;
+      //}
   }
   return 0;
 }
