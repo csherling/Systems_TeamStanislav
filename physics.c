@@ -18,8 +18,8 @@
 char shoot(player *shooter, player *target, double v, double theta){
   double arrow_x=shooter->xcor;
   double arrow_y = PLAYER_HEIGHT;
-  double vx = v*sin(theta);
-  double vy = abs(v*cos(theta));
+  double vx = v*cos(theta);
+  double vy = abs(v*sin(theta));
   while(arrow_y>=0){
     //Movements
     vy-=GRAVITY*.01;
@@ -41,7 +41,6 @@ char shoot(player *shooter, player *target, double v, double theta){
 	}
       }
     }
-    t+=.01;
   }
   if(abs(arrow_x)>abs(target->xcor)){
     overshoot(abs(arrow_x-target->xcor));
@@ -68,6 +67,7 @@ void overshoot(int height){
 void undershoot(int distance){
   printf("MISSED! undershot by %d\n",distance);
 }
+
 int main(){
   player p1;
   p1.xcor = 0;
@@ -86,14 +86,14 @@ int main(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     printf("Velocity: %s\nTheta: %s\n",velocity, theta);
-    //char c = 0;
-    //if(c){
+    char c = 0;
+    if(c){
       going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180);
-      //c=1;
-      //}else{
-      //going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
-      //c=0;
-      //}
+      c=1;
+    }else{
+      going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
+      c=0;
+    }
   }
   return 0;
 }
