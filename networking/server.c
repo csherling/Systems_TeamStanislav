@@ -2,18 +2,41 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <signal.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#include <string.h>
 
 #include "networking.h"
 
+static void sighandler(int signo){
+  if(signo == SIGINT){
+    removeShmem();
+  }
+  else if (signo == SIGUSR1) {
+    printf("ppid: %d\n", getppid());
+  }
+}
+
 void process( char * s );
-void sub_server( int sd, char buffer[], int sbuff );
+  void sub_server( int sd, char buffer[], int sbuff, char *shmem[] );
+int createShmem();
+int removeShmem();
 
 int main() {
+
+  umask(0000);
 
   int consd[2];
   int conconnection[2];
   int conclient[2];
   char numplayers[10];
+
+  int shmid = createShmem();
+
+  char* shmem[MESSAGE_BUFFER_SIZE];
 
   consd[0] = 0;
   consd[1] = 0;
@@ -77,40 +100,55 @@ int main() {
   sd[1] = server_setup(9003);
   connection[1] = server_connect( sd[1] );
   printf("display 2 connected\n");
-    
-  while (1) {
-    
-    printf("enter message: ");
-    fgets( buffer, sizeof(buffer), stdin );
-    char *p = strchr(buffer, '\n');
-    *p = 0;
-    
-    clients[0] = fork();
-    if(clients[0]){
-      clients[1] = fork();
-    }
+   
 
-    if ( clients[0] == 0 ) {
-      //      close(sd[0]);
-      sub_server( connection[0], buffer, sizeof(buffer) );
+  clients[0] = fork();
+  if(clients[0]){
+    clients[1] = fork();
+  }
+  
+  if ( clients[0] == 0 ) {
+    //      close(sd[0]);
+    while(1){
+      sleep(2);
+      sub_server( connection[0], buffer, sizeof(buffer), shmem );
       sleep(10);
       close(sd[0]);
       exit(0);
     }
-    if ( clients[1] == 0 ) {      
-      //      close(sd[1]);
-      sub_server( connection[1], buffer, sizeof(buffer) );
+  }
+  if ( clients[1] == 0 ) {      
+    //      close(sd[1]);
+    while(1){
+      sleep(2);
+      sub_server( connection[1], buffer, sizeof(buffer), shmem );
       sleep(10);
       close(sd[1]);
       exit(0);
     }
-    else {
+  }
+  if(clients[0]){
+    close( connection[0] );
+    close( connection[1] );
+    while (1) {
+      
+      read(consd[0], buffer, sizeof(buffer));
+      /* printf("enter message: "); */
+      /* fgets( buffer, sizeof(buffer), stdin ); */
+      /* char *p = strchr(buffer, '\n'); */
+      /* *p = 0; */
+      strcpy(*shmem, buffer);
+      
+    }    
+    
       /* sleep(20); */
-      /* close( connection[0] ); */
-      /* close( connection[1] ); */
+    
       /* sleep(10); */
       /* exit(0); */
-    }
+  }
+ 
+
+
     
 
     /* for(i = 0; i < 6; i++){ */
@@ -140,16 +178,15 @@ int main() {
     /* else { */
     /*   close( connection ); */
     /* } */
-  }
+
   return 0;
 }
 
 
-void sub_server( int sd, char buffer[], int sbuff ) {
+  void sub_server( int sd, char buffer[], int sbuff, char * shmem[] ) {
   printf("GOT HERE\n");
   fflush(stdout);
-  write( sd, buffer, sbuff);    
-  read( sd, buffer, sbuff);
+  write( sd, *shmem, sbuff);    
   printf( "received: %s\n", buffer );
   fflush(stdout);
 }
@@ -159,4 +196,22 @@ void process( char * s ) {
     *s = (*s - 'a' + 13) % 26 + 'a';
     s++;
   }
+}
+
+int createShmem(){
+  int key = ftok("makefile", 22);
+  int shmid;
+  //Creates Shmem
+  shmid = shmget(key, 4, IPC_CREAT | 0644);
+  printf("shmem created %d\n", shmid);
+  return shmid;
+}
+
+int removeShmem(){
+  int key = ftok("makefile", 22);
+  int shmid = shmget(key, 0, 0);
+  struct shmid_ds d;
+  shmctl(shmid, IPC_RMID, &d);
+  printf("shared memory removed: %d\n", shmid);
+  return shmid;
 }
