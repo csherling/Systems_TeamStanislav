@@ -26,6 +26,7 @@ int main( int argc, char *argv[] ) {
   
   while(1){
     while(read( sd, buffer, sizeof(buffer))){
+      sleep(1);
       printf( "received: %s\n", buffer );
       /* printf("enter message: "); */
       /* fgets( buffer, sizeof(buffer), stdin ); */

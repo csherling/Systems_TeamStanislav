@@ -112,29 +112,26 @@ int main() {
   if ( clients[0] == 0 ) {
     //      close(sd[0]);
     while(1){
-      sleep(2);
       sub_server( connection[0], sizeof(buffer), shmem );
-      sleep(10);
-      close(sd[0]);
-      exit(0);
     }
+    close(sd[0]);
+    exit(0);
   }
   if ( clients[1] == 0 ) {      
     //      close(sd[1]);
     while(1){
-      sleep(2);
       sub_server( connection[1], sizeof(buffer), shmem );
-      sleep(10);
-      close(sd[1]);
-      exit(0);
     }
+    close(sd[1]);
+    exit(0);
   }
   if(clients[0]){
     /* close( connection[0] ); */
     /* close( connection[1] ); */
     while (1) {
-      
-      read(consd[0], shmem, sizeof(shmem));
+      if(read(conconnection[0], shmem, 1)){
+	printf("GOT: %s\n", shmem);
+      }
       /* printf("enter message: "); */
       /* fgets( buffer, sizeof(buffer), stdin ); */
       /* char *p = strchr(buffer, '\n'); */
@@ -187,6 +184,7 @@ int main() {
 
 void sub_server( int sd, int sbuff, char  shmem[] ) {
   printf("GOT HERE\n");
+  printf("%s\n", shmem);
   fflush(stdout);
   write( sd, shmem, sbuff);    
 }

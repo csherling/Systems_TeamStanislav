@@ -31,6 +31,9 @@ int main( int argc, char *argv[] ) {
   
   printf("memes\n");
   fflush(stdout);
+  
+  int msgsize = 0;
+  int i = 0;
 
   while (1) {
     printf("enter message: ");
@@ -38,8 +41,12 @@ int main( int argc, char *argv[] ) {
     fgets( buffer, sizeof(buffer), stdin );
     char *p = strchr(buffer, '\n');
     *p = 0;
-  
-    write( sd, buffer, sizeof(buffer) );
+    /* for(msgsize = 0; buffer[msgsize]; msgsize++); */
+    write( sd, buffer, 1 );
+    printf("Sent: %s\n", buffer);
+    /* for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){ */
+    /*   buffer[i] = 0; */
+    /* } */
   }
   
   return 0;
