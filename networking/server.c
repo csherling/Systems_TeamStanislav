@@ -21,7 +21,7 @@ static void sighandler(int signo){
 }
 
 void process( char * s );
-  void sub_server( int sd, char buffer[], int sbuff, char *shmem[] );
+void sub_server( int sd, int sbuff, char shmem[] );
 int createShmem();
 int removeShmem();
 
@@ -36,7 +36,9 @@ int main() {
 
   int shmid = createShmem();
 
-  char* shmem[MESSAGE_BUFFER_SIZE];
+  char *shmem = shmat(shmid, 0, 0);
+  shmem[0] = 'a';
+  shmem[1] = 0;
 
   consd[0] = 0;
   consd[1] = 0;
@@ -111,7 +113,7 @@ int main() {
     //      close(sd[0]);
     while(1){
       sleep(2);
-      sub_server( connection[0], buffer, sizeof(buffer), shmem );
+      sub_server( connection[0], sizeof(buffer), shmem );
       sleep(10);
       close(sd[0]);
       exit(0);
@@ -121,23 +123,23 @@ int main() {
     //      close(sd[1]);
     while(1){
       sleep(2);
-      sub_server( connection[1], buffer, sizeof(buffer), shmem );
+      sub_server( connection[1], sizeof(buffer), shmem );
       sleep(10);
       close(sd[1]);
       exit(0);
     }
   }
   if(clients[0]){
-    close( connection[0] );
-    close( connection[1] );
+    /* close( connection[0] ); */
+    /* close( connection[1] ); */
     while (1) {
       
-      read(consd[0], buffer, sizeof(buffer));
+      read(consd[0], shmem, sizeof(shmem));
       /* printf("enter message: "); */
       /* fgets( buffer, sizeof(buffer), stdin ); */
       /* char *p = strchr(buffer, '\n'); */
       /* *p = 0; */
-      strcpy(*shmem, buffer);
+      /* strcpy(*shmem, buffer); */
       
     }    
     
@@ -183,12 +185,10 @@ int main() {
 }
 
 
-  void sub_server( int sd, char buffer[], int sbuff, char * shmem[] ) {
+void sub_server( int sd, int sbuff, char  shmem[] ) {
   printf("GOT HERE\n");
   fflush(stdout);
-  write( sd, *shmem, sbuff);    
-  printf( "received: %s\n", buffer );
-  fflush(stdout);
+  write( sd, shmem, sbuff);    
 }
 void process( char * s ) {
 
