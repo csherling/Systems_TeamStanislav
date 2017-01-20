@@ -20,6 +20,7 @@
  0-Miss
  */
 char shoot(player *shooter, player *target, double v, double theta, char direction, double s1, double s2, double s3, double s4){
+  printf("Random seeds %f, %f, %f, %f\n", s1, s2, s3, s4);
   double arrow_x=shooter->xcor;
   double arrow_y = PLAYER_HEIGHT/*+getTerrain(shooter->xcor, s1, s2, s3, s4)*/;
   double vx = direction*v*cos(theta);
