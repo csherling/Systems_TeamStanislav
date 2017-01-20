@@ -1,8 +1,10 @@
+#include <stdio.h>
+#include <math.h>
 #include <SDL.h>
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
-#include <stdio.h>
 
+#define PI 3.1415926535
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -12,16 +14,48 @@
 #define MAN_G 0x55
 #define MAN_B 0x00
 
-int draw_man(SDL_Surface* screen, int x, int y) {
+#define ARROW_LENGTH 18
+#define ARROW_HEAD_ANGLE (PI * 0.2)
+#define ARROW_HEAD_LEN 6
+
+typedef struct {
+    int x;
+    int y;
+} archer;
+
+int clear(SDL_Renderer* renderer) {
+    SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 255);
+    SDL_RenderFillRect(renderer, NULL);
+}
+
+int draw_man(SDL_Renderer* renderer, int x, int y) {
     SDL_Rect rect;
     rect.x = x - MAN_WIDTH / 2;
     rect.y = y - MAN_HEIGHT;
     rect.w = MAN_WIDTH;
     rect.h = MAN_HEIGHT;
-    SDL_FillRect(screen, &rect, SDL_MapRGB(screen->format, MAN_R, MAN_G, MAN_B));
+    SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
+    SDL_RenderFillRect(renderer, &rect);
+}
+
+int draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
+    // theta is relative to horizontal, clockwise is positive
+    int xf = x + (int) (cos(theta) * ARROW_LENGTH);
+    int yf = y + (int) (sin(theta) * ARROW_LENGTH);
+    SDL_RenderDrawLine(renderer, x, y, xf, yf);
+    // head_dx and head_dy are the x and y deltas form the arrow's head
+    // to the end of the first line coming off of it.
+    int head_dx = (int) (cos(theta - ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
+    int head_dy = (int) (sin(theta - ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
+    SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
+    // set head_dx and head_dy to deltas for other line coming off of arrow's head
+    head_dx = (int) (cos(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
+    head_dy = (int) (sin(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
+    SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
 }
 
 int main(int argc, char* argv[]) {
+    printf("atan2(1, 0) = %f.1\n", atan2(1, 0));
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("ERROR: SDL_Init failed: SDL_Error: %s\n", SDL_GetError());
         exit(1);
@@ -42,18 +76,22 @@ int main(int argc, char* argv[]) {
     }
 
     // Get window surface
-    SDL_Surface* screen = SDL_GetWindowSurface(window);
+    //SDL_Surface* screen = SDL_GetWindowSurface(window);
 
-    //SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    printf("about to create renderer\n");
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+    printf("created renderer\n");
 
-    // Fill the surface white
-    SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
+    // Fill the window white
+    clear(renderer);
+    printf("cleared screen\n");
     SDL_UpdateWindowSurface(window);
 
     int quit = 0;
     SDL_Event e;
     int x = SCREEN_WIDTH / 2;
     int y = SCREEN_HEIGHT;
+    printf("starting loop\n");
     while (!quit) {
         // Poll events until the event queue is empty (SDL_PollEvent returns
         // 0 when event queue is empty).
@@ -70,8 +108,13 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
-        SDL_FillRect(screen, NULL, SDL_MapRGB(screen->format, 0xFF, 0xFF, 0xFF));
-        draw_man(screen, x, y);
+        clear(renderer);
+        draw_man(renderer, x, y);
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+        double angle_to_mouse = atan2((double) my - ((double) y - 20), mx - ((double) x - 20));
+        draw_arrow(renderer, x - 20, y - 20, angle_to_mouse);
+        SDL_RenderPresent(renderer);
         SDL_UpdateWindowSurface(window);
     }
 
