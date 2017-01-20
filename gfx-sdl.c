@@ -110,7 +110,10 @@ int main(int argc, char* argv[]) {
         }
         clear(renderer);
         draw_man(renderer, x, y);
-        draw_arrow(renderer, x - 20, y - 20, x);
+        int mx, my;
+        SDL_GetMouseState(&mx, &my);
+        double angle_to_mouse = atan2((double) my - ((double) y - 20), mx - ((double) x - 20));
+        draw_arrow(renderer, x - 20, y - 20, angle_to_mouse);
         SDL_RenderPresent(renderer);
         SDL_UpdateWindowSurface(window);
     }
