@@ -3,7 +3,7 @@
 
 typedef struct player{char health; double xcor;}player;
 
-char shoot(player *shooter, player *target, double v, double theta, char direction);
+char shoot(player *shooter, player *target, double v, double theta, char direction, double s1, double s2, double s3, double s4);
 void processCor(double x, double y, double theta);
 void kill(player *p);
 void overshoot(int height);
