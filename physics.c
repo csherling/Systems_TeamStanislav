@@ -15,11 +15,11 @@
  1-Hit
  0-Miss
  */
-char shoot(player *shooter, player *target, double v, double theta){
+char shoot(player *shooter, player *target, double v, double theta, char direction){
   double arrow_x=shooter->xcor;
   double arrow_y = PLAYER_HEIGHT;
-  double vx = v*cos(theta);
-  double vy = abs(v*sin(theta));
+  double vx = direction*v*cos(theta);
+  double vy = fabs(v*sin(theta));
   while(arrow_y>=0){
     //Movements
     vy-=GRAVITY*.01;
@@ -42,10 +42,10 @@ char shoot(player *shooter, player *target, double v, double theta){
       }
     }
   }
-  if(abs(arrow_x)>abs(target->xcor)){
-    overshoot(abs(arrow_x-target->xcor));
+  if(direction*(target->xcor-arrow_x)<0){
+    overshoot(fabs(arrow_x-target->xcor));
   }else{
-    undershoot(abs(target->xcor-arrow_x));
+    undershoot(fabs(target->xcor-arrow_x));
   }
   return 0;
 }
@@ -86,14 +86,7 @@ int main(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     printf("Velocity: %s\nTheta: %s\n",velocity, theta);
-    char c = 0;
-    if(c){
-      going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180);
-      c=1;
-    }else{
-      going=shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180);
-      c=0;
-    }
+    going=shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180, 1);
   }
   return 0;
 }
