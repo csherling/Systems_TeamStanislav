@@ -12,8 +12,8 @@ void playGame(){
   player p2;
   p2.xcor = DISTANCE;
   p2.health = START_HEALTH;
-  double s1, s2, s3, s4;
-  setSeeds(&s1, &s2, &s3, &s4);
+  seed s;
+  setSeeds(&s);
   //input stuff
   char input[10];
   char* theta;
@@ -29,7 +29,7 @@ void playGame(){
     strcpy(velocity,strsep(&theta, ","));
     //end input stuff
     arrow arrow1 = make_arrow(atof(velocity), atof(theta)*M_PI/180);
-    shoot(&p1, &p2, &arrow1, s1, s2, s3, s4);
+    shoot(&p1, &p2, &arrow1, s);
     //2 player shoots
     //input stuff
     printf("Enter Shot:\n");
@@ -39,7 +39,7 @@ void playGame(){
     strcpy(velocity,strsep(&theta, ","));
     //end input stuff
     arrow arrow2 = make_arrow(atof(velocity), (180 - atof(theta)) *M_PI/180);
-    shoot(&p2, &p1, &arrow2, s1, s2, s3, s4);
+    shoot(&p2, &p1, &arrow2, s);
   }
 }
 

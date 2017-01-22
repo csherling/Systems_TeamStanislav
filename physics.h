@@ -15,14 +15,20 @@ typedef struct arrow {
     double vx;
     double vy;
 } arrow;
-
+typedef struct seed{
+  double s1;
+  double s2;
+  double s3;
+  double s4;
+} seed;
 arrow make_arrow(double v, double angle);
-char shoot(player *shooter, player *target, arrow *arrow, double s1, double s2, double s3, double s4);
+char shoot(player *shooter, player *target, arrow *arrow, seed s);
+int shootStep(player *target, arrow *arrow, seed s);
 void processCor(double x, double y, double theta);
 void kill(player *p);
-void overshoot(int height);
+void overshoot(int distance);
 void undershoot(int distance);
-void setSeeds(double *s1, double *s2, double *s3, double *s4);
-double getTerrain(double x, double s1, double s2, double s3, double s4);
+void setSeeds(seed *s);
+double getTerrain(double x, seed s1);
 
 #endif
