@@ -44,7 +44,6 @@ char shoot(
         // Terrain seeds:
 	seed s
         ) {
-  printf("Random seeds %f, %f, %f, %f\n", s.s1, s.s2, s.s3, s.s4);
   arrow->x = shooter->xcor;
   arrow->y = PLAYER_HEIGHT+getTerrain(shooter->xcor, s);
   while(arrow->y>=0+getTerrain(arrow->x, s)){
@@ -96,10 +95,11 @@ void undershoot(int distance){
 //sets the seeds to be used in getTerrain
 void setSeeds(seed *s){
   srand(time(NULL));//Note srand is applicable in function because this is called once per game
-  s->s1 = (double)rand()/(double)RAND_MAX;
+  s->s1 = (double)rand()/(double)RAND_MAX*100;//not sure why but first result is always small
   s->s2 = (double)rand()/(double)RAND_MAX;
   s->s3 = (double)rand()/(double)RAND_MAX;
   s->s4 = (double)rand()/(double)RAND_MAX;
+  printf("Random seeds %f, %f, %f, %f\n", s->s1, s->s2, s->s3, s->s4);
 }
 
 //Generates hilly terrain using trigonometric functions
@@ -108,16 +108,14 @@ void setSeeds(seed *s){
 double getTerrain(double x, seed s){
   double ret;
   ret = 0;
-  /* TO BE ADDED WHEN TERRAIN WORKS
-  ret+=(s.s1*10)*(sin(x*s.s2/10));
+  ret+=(s.s1*10)*(sin(x*s.s2));
   s.s1 = 1-s.s1;
   s.s2 = 1-s.s2;
-  ret+=(s.s1*10)*(sin(x*s.s2/10));
-  ret+=(s.s3*10)*(cos(x*s.s4/10));
+  ret+=(s.s1*10)*(sin(x*s.s2));
+  ret+=(s.s3*10)*(cos(x*s.s4));
   s.s3 = 1-s.s3;
   s.s4 = 1-s.s4;
-  ret+=(s.s3*10)*(cos(x*s.s4/10));
-  */
+  ret+=(s.s3*10)*(cos(x*s.s4));
   return ret;
 }
 
