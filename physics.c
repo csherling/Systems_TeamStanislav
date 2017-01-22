@@ -71,6 +71,22 @@ char shoot(
   return 0;
 }
 
+int shootStep(
+        player *target,
+        arrow *arrow
+        ) {
+    arrow->vy-=GRAVITY*.01;
+    arrow->x+=arrow->vx*.01;
+    arrow->y+=arrow->vy*.01;
+    processCor(arrow->x, arrow->y,atan2(arrow->vy, arrow->vx));
+    if(arrow->x >= target->xcor && arrow->x <= target->xcor + PLAYER_WIDTH){
+      if(arrow->y<=PLAYER_HEIGHT/*+getTerrain(target->xcor, s1, s2, s3, s4)*/){
+          kill(target);
+          return 1;
+      }
+    }
+}
+
 void processCor(double x, double y, double theta){
   printf("(%f,%f) Angle: %f\n",x,y,theta);
 }

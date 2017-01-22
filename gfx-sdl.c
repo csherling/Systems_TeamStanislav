@@ -4,6 +4,8 @@
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 
+#include "physics.h"
+
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -91,6 +93,18 @@ int main(int argc, char* argv[]) {
     int x = SCREEN_WIDTH / 2;
     int y = SCREEN_HEIGHT;
 
+    player jim;
+    jim.xcor = 0;
+    jim.health = START_HEALTH;
+    player bob;
+    bob.xcor = DISTANCE;
+    bob.health = START_HEALTH;
+    arrow ar = make_arrow(1.0, 2.0);
+    ar.x = x;
+    ar.y = y;
+
+    int shot = 0;
+
     printf("starting loop\n");
     while (!quit) {
         // Poll events until the event queue is empty (SDL_PollEvent returns
@@ -98,6 +112,8 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
+            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                shot = 1;
             } else if (e.type == SDL_KEYDOWN) {
                 SDL_Keysym sym = e.key.keysym;
                 SDL_Keycode code = sym.sym;
@@ -108,12 +124,16 @@ int main(int argc, char* argv[]) {
                 }
             }
         }
+        if (shot) {
+            printf("%d\n", ar.vx);
+            shootStep(&bob, &ar);
+        }
         clear(renderer);
         draw_man(renderer, x, y);
         int mx, my;
         SDL_GetMouseState(&mx, &my);
-        double angle_to_mouse = atan2((double) my - ((double) y - 20), mx - ((double) x - 20));
-        draw_arrow(renderer, x - 20, y - 20, angle_to_mouse);
+        double ar_angle = atan2(ar.vy, ar.vx);
+        draw_arrow(renderer, ar.x, ar.y, ar_angle);
         SDL_RenderPresent(renderer);
         SDL_UpdateWindowSurface(window);
     }
