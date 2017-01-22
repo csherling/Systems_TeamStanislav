@@ -30,5 +30,6 @@ void overshoot(int distance);
 void undershoot(int distance);
 void setSeeds(seed *s);
 double getTerrain(double x, seed s1);
-
+void processTerrain(double x, double y);
+void display(char comp, char numcoms, seed s);
 #endif

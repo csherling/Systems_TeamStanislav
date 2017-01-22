@@ -120,3 +120,16 @@ double getTerrain(double x, seed s){
   */
   return ret;
 }
+
+void processTerrain(double x, double y){
+  printf("(%f,%f\n)",x,y);
+}
+
+//display displays the terrain initially. It uses the current computer to determine what piece of the terrain to display
+void display(char comp, char numcoms, seed s){
+  double xi = (double)comp*DISTANCE/numcoms;
+  while(xi<(double)(comp+1)*DISTANCE/numcoms){
+    processTerrain(xi, getTerrain(xi, s));
+    xi+=.01;
+  }
+}

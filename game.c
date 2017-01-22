@@ -14,6 +14,7 @@ void playGame(){
   p2.health = START_HEALTH;
   seed s;
   setSeeds(&s);
+  display(1,3,s);
   //input stuff
   char input[10];
   char* theta;
