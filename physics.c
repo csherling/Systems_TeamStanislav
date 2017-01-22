@@ -5,12 +5,6 @@
 #include <time.h> //does time exist tho?
 #include "physics.h"
 
-#define PLAYER_HEIGHT 5
-#define PLAYER_WIDTH 3
-#define GRAVITY 9.8
-#define DISTANCE 100
-#define START_HEALTH 3
-
 /*Params:
  shooter: pointer to the player who is shooting the arrow
  target: point to the player who is being shot at
@@ -55,7 +49,6 @@ void kill(player *p){
   printf("HIT! new health: %d\n",p->health);
 }
 
-
 void overshoot(int height){
   printf("MISSED! overshot by %d\n",height);
 }
@@ -87,45 +80,4 @@ double getTerrain(double x, double s1, double s2, double s3, double s4){
   s4 = 1-s4;
   ret+=(s3*10)*(cos(x*s4/10));
   return ret;
-}
-
-void playGame(){
-  //sets up the game
-  player p1;
-  p1.xcor = 0;
-  p1.health = START_HEALTH;
-  player p2;
-  p2.xcor = DISTANCE;
-  p2.health = START_HEALTH;
-  double s1, s2, s3, s4;
-  setSeeds(&s1, &s2, &s3, &s4);
-  //input stuff
-  char input[10];
-  char* theta;
-  char velocity[10];
-  //end input stuff
-  while(p1.health>0&&p2.health>0){
-    //1 player shoots
-    //input stuff
-    printf("Enter Shot:\n");
-    fgets(input, 10, stdin);
-    *strstr(input, "\n")=0;
-    theta=input;
-    strcpy(velocity,strsep(&theta, ","));
-    //end input stuff
-    shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180, 1, s1, s2, s3, s4);
-    //2 player shoots
-    //input stuff
-    printf("Enter Shot:\n");
-    fgets(input, 10, stdin);
-    *strstr(input, "\n")=0;
-    theta=input;
-    strcpy(velocity,strsep(&theta, ","));
-    //end input stuff
-    shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180, -1, s1, s2, s3, s4);
-  }
-}
-int main(){
-  playGame();
-  return 0;
 }
