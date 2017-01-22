@@ -4,7 +4,6 @@
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 
-#define PI 3.1415926535
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
@@ -15,7 +14,7 @@
 #define MAN_B 0x00
 
 #define ARROW_LENGTH 18
-#define ARROW_HEAD_ANGLE (PI * 0.2)
+#define ARROW_HEAD_ANGLE (M_PI * 0.2)
 #define ARROW_HEAD_LEN 6
 
 typedef struct {
@@ -91,6 +90,7 @@ int main(int argc, char* argv[]) {
     SDL_Event e;
     int x = SCREEN_WIDTH / 2;
     int y = SCREEN_HEIGHT;
+
     printf("starting loop\n");
     while (!quit) {
         // Poll events until the event queue is empty (SDL_PollEvent returns

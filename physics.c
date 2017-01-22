@@ -13,7 +13,19 @@
  1-Hit
  0-Miss
  */
-char shoot(player *shooter, player *target, double v, double theta, char direction, double s1, double s2, double s3, double s4){
+
+char shoot(
+        player *shooter,
+        player *target,
+        double v, // shot velocity
+        double theta, // shot angle
+        char direction, // shot direction (left/right)
+        // Terrain seeds:
+        double s1,
+        double s2,
+        double s3,
+        double s4
+        ) {
   printf("Random seeds %f, %f, %f, %f\n", s1, s2, s3, s4);
   double arrow_x=shooter->xcor;
   double arrow_y = PLAYER_HEIGHT/*+getTerrain(shooter->xcor, s1, s2, s3, s4)*/;
@@ -27,15 +39,15 @@ char shoot(player *shooter, player *target, double v, double theta, char directi
     processCor(arrow_x, arrow_y,atan2(vy, vx));
     if(arrow_x>=target->xcor&&arrow_x<=target->xcor+PLAYER_WIDTH){
       if(arrow_y<=PLAYER_HEIGHT/*+getTerrain(target->xcor, s1, s2, s3, s4)*/){
-	kill(target);
-	return 1;
+          kill(target);
+          return 1;
       }
     }
   }
-  if(direction*(target->xcor-arrow_x)<0){
-    overshoot(fabs(arrow_x-target->xcor));
+  if(direction*(target->xcor - arrow_x)<0){
+    overshoot(fabs(arrow_x - target->xcor));
   }else{
-    undershoot(fabs(target->xcor-arrow_x));
+    undershoot(fabs(target->xcor - arrow_x));
   }
   return 0;
 }
