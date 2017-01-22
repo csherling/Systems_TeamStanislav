@@ -28,7 +28,8 @@ void playGame(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     //end input stuff
-    shoot(&p1, &p2, atof(velocity), atof(theta)*M_PI/180, 1, s1, s2, s3, s4);
+    arrow arrow1 = make_arrow(atof(velocity), atof(theta)*M_PI/180);
+    shoot(&p1, &p2, &arrow1, s1, s2, s3, s4);
     //2 player shoots
     //input stuff
     printf("Enter Shot:\n");
@@ -37,7 +38,8 @@ void playGame(){
     theta=input;
     strcpy(velocity,strsep(&theta, ","));
     //end input stuff
-    shoot(&p2, &p1, atof(velocity), atof(theta)*M_PI/180, -1, s1, s2, s3, s4);
+    arrow arrow2 = make_arrow(atof(velocity), (180 - atof(theta)) *M_PI/180);
+    shoot(&p2, &p1, &arrow2, s1, s2, s3, s4);
   }
 }
 
