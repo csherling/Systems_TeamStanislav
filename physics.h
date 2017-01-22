@@ -24,6 +24,7 @@ typedef struct seed{
 arrow make_arrow(double v, double angle);
 char shoot(player *shooter, player *target, arrow *arrow, seed s);
 int shootStep(player *target, arrow *arrow, seed s);
+void move(player *shooter, double distance);
 void processCor(double x, double y, double theta);
 void kill(player *p);
 void overshoot(int distance);

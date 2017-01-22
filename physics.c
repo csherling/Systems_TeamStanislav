@@ -47,7 +47,6 @@ char shoot(
   arrow->x = shooter->xcor;
   arrow->y = PLAYER_HEIGHT+getTerrain(shooter->xcor, s);
   while(arrow->y>=0+getTerrain(arrow->x, s)){
-    //Movements
     shootStep(target, arrow, s);
   }
   if(signum(arrow->vx)*(target->xcor - arrow->x)<0){
@@ -77,6 +76,17 @@ int shootStep(
 
 void processCor(double x, double y, double theta){
   printf("(%f,%f) Angle: %f\n",x,y,theta);
+}
+
+void move(player *shooter, double distance){
+  shooter->xcor+=distance;
+  if(shooter->xcor>100){
+    shooter->xcor=100;
+  }
+  if(shooter->xcor<0){
+    shooter->xcor=0;
+  }  
+  printf("Moved %f\n", distance);
 }
 
 void kill(player *p){
