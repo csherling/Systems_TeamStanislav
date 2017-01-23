@@ -5,19 +5,7 @@
 #include <SDL_keycode.h>
 
 #include "physics.h"
-
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
-#define MAN_WIDTH 10
-#define MAN_HEIGHT 30
-#define MAN_R 0xAA
-#define MAN_G 0x55
-#define MAN_B 0x00
-
-#define ARROW_LENGTH 18
-#define ARROW_HEAD_ANGLE (M_PI * 0.2)
-#define ARROW_HEAD_LEN 6
+#include "gfx-sdl.h"
 
 typedef struct {
     int x;
@@ -55,21 +43,37 @@ void draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
     SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
 }
 
-void draw_terrain(SDL_Renderer* renderer, seed s) {
+void draw_terrain_1(SDL_Renderer* renderer, int* terrain, int width) {
     SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
     int prevX = 0;
     int prevY = 0;
     int x;
-    for (x = 0; x < SCREEN_WIDTH; x++) {
+    for (x = 0; x < width; x+=1) {
+        //int y = (int) getTerrain((double) x, s);
+        int y = terrain[x];
+        printf("Terrain X,Y: %d, %d\n", x, y);
+        SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, SCREEN_HEIGHT - y);
+        prevX = x;
+        prevY = y;
+    }
+}
+
+void draw_terrain_2(SDL_Renderer* renderer, seed s) {
+    SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
+    int prevX = 0;
+    int prevY = 0;
+    int x;
+    for (x = 0; x < SCREEN_WIDTH; x+=1) {
         int y = (int) getTerrain((double) x, s);
         printf("Terrain X,Y: %d, %d\n", x, y);
-        SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, y);
+        SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, SCREEN_HEIGHT - y);
         prevX = x;
         prevY = y;
     }
 }
 
 int main(int argc, char* argv[]) {
+    srand(time(NULL));
     printf("atan2(1, 0) = %f.1\n", atan2(1, 0));
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("ERROR: SDL_Init failed: SDL_Error: %s\n", SDL_GetError());
@@ -121,8 +125,14 @@ int main(int argc, char* argv[]) {
     int shot = 0;
 
     int quit = 0;
-    // Draw the terrain
-    draw_terrain(renderer, s);
+
+    // Draw the terrain (random slope method)
+    int terrain[SCREEN_WIDTH];
+    genTerrain(terrain, SCREEN_WIDTH);
+    draw_terrain_1(renderer, terrain, SCREEN_WIDTH);
+    // Draw the terrain (random trig method)
+    //draw_terrain_2(renderer, s);
+
     // Update screen
     SDL_RenderPresent(renderer);
     SDL_UpdateWindowSurface(window);

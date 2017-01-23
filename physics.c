@@ -4,6 +4,7 @@
 #include <string.h>
 #include <time.h> //does time exist tho?
 #include "physics.h"
+#include "gfx-sdl.h"
 
 double signum(double x) {
     if (x > 0.0) {
@@ -128,6 +129,46 @@ double getTerrain(double x, seed s){
   ret+=(s.s3*10)*(cos(x*s.s4));
   return ret;
 }
+
+// Generate terrain, in `ys`. `ys[x]` is the y
+// position at x coordinate `x`.
+// `width` is the number of x-units (pixels) for
+// which to generate a corresponding terrain height
+void genTerrain(int* ys, int width) {
+    ys[0] = 0;
+    int dy = 1;
+    int i;
+    for (i = 1; i < width; i++) {
+        int r = rand() % 100;
+        if (ys[i - 1] > 200) {
+            dy -= 2;
+        }
+        if (r < 20) {
+            dy += 1;
+        } else if (r < 40) {
+            dy -= 1;
+        }
+        ys[i] = ys[i - 1] + dy;
+        ys[i] = abs(ys[i]);
+    }
+}
+
+// More sporadic version of genTerrain
+//void genTerrain(int* ys) {
+//    ys[0] = 0;
+//    int direction = 1;
+//    int i;
+//    for (i = 1; i < SCREEN_WIDTH; i++) {
+//        if (rand() < RAND_MAX / 80) {
+//            direction *= -1;
+//        }
+//        if (ys[i - 1] > 200) {
+//            direction = -1;
+//        }
+//        ys[i] = ys[i - 1] + (rand() % 5 + 2) * direction;
+//        ys[i] = abs(ys[i]);
+//    }
+//}
 
 void processTerrain(double x, double y){
   printf("(%f,%f\n)",x,y);
