@@ -89,7 +89,11 @@ int main() {
       z = strchr(p1port, '\n');
       *z = 0;
       int port1 = atoi(p1port);
+      printf("before connection\n");
+      fflush(stdout);
       consd[0] = server_setup(port1);
+      printf("after connection\n");
+      fflush(stdout);
       conconnection[0] = server_connect( consd[0] );
       printf("Player 1 controller connected!\n");
       printf("Specify P2 Port: \n");
@@ -165,8 +169,8 @@ int main() {
     //      close(sd[1]);
     while(1){
       sleep(1);
-      sub_server( connection[1], sizeof(buffer), shmem1 );
-      sub_server( connection[1], sizeof(buffer), shmem2 );
+      sub_server( connection[1], sizeof(buffer), shmem1);
+      sub_server( connection[1], sizeof(buffer), shmem2);
     }
     close(sd[1]);
     exit(0);
@@ -191,7 +195,7 @@ int main() {
     else if(conclient[1]==0){
       while (1) {
 	sleep(1);
-	if(read(conconnection[0], shmem2, 1)){
+	if(read(conconnection[1], shmem2, 1)){
 	  printf("GOT: %s\n", shmem2);
 	}
       }    
