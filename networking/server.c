@@ -13,7 +13,8 @@
 
 static void sighandler(int signo){
   if(signo == SIGINT){
-    removeShmem();
+    removeShmemP1();
+    removeShmemP2();
   }
   else if (signo == SIGUSR1) {
     printf("ppid: %d\n", getppid());
@@ -22,8 +23,10 @@ static void sighandler(int signo){
 
 void process( char * s );
 void sub_server( int sd, int sbuff, char shmem[] );
-int createShmem();
-int removeShmem();
+int createShmemP1();
+int createShmemP2();
+int removeShmemP1();
+int removeShmemP2();
 
 int main() {
 
@@ -33,12 +36,26 @@ int main() {
   int conconnection[2];
   int conclient[2];
   char numplayers[10];
+  char p1port[6];
+  char p2port[6];
+  char disp1port[6];
+  char disp2port[6];
+  char disp3port[6];
+  char disp4port[6];
+  char disp5port[6];
+  char disp6port[6];
+  char *z;
 
-  int shmid = createShmem();
+  int shmid1 = createShmemP1();
+  int shmid2 = createShmemP2();
 
-  char *shmem = shmat(shmid, 0, 0);
-  shmem[0] = 'a';
-  shmem[1] = 0;
+  char *shmem1 = shmat(shmid1, 0, 0);
+  shmem1[0] = '1';
+  shmem1[1] = 0;
+
+  char *shmem2 = shmat(shmid2, 0, 0);
+  shmem2[0] = '2';
+  shmem2[1] = 0;
 
   consd[0] = 0;
   consd[1] = 0;
@@ -50,22 +67,37 @@ int main() {
   while(1){
     printf("how many players are playing? (1/2): \n");
     fgets( numplayers, sizeof(numplayers), stdin );
-    char *nt = strchr(numplayers, '\n');
-    *nt = 0;
+    z = strchr(numplayers, '\n');
+    *z = 0;
     short numplz = atoi(numplayers);
     if(numplz == 1){
       printf("Initiating 1 player mode. Please connect a controlling device.\n");
-      consd[0] = server_setup(9000);
+      printf("Specify P1 Port: \n");
+      fgets( p1port, sizeof(p1port), stdin );
+      z = strchr(p1port, '\n');
+      *z = 0;
+      short port1 = atoi(p1port);
+      consd[0] = server_setup(port1);
       conconnection[0] = server_connect( consd[0] );
       printf("Player controller connected!\n");
       break;
     }
     else if(numplz == 2){
       printf("Initiating 2 player mode. Please connect a controlling device.\n");
-      consd[0] = server_setup(9000);
+      printf("Specify P1 Port: \n");
+      fgets( p1port, sizeof(p1port), stdin );
+      z = strchr(p1port, '\n');
+      *z = 0;
+      short port1 = atoi(p1port);
+      consd[0] = server_setup(port1);
       conconnection[0] = server_connect( consd[0] );
       printf("Player 1 controller connected!\n");
-      consd[1] = server_setup(9001);
+      printf("Specify P2 Port: \n");
+      fgets( p2port, sizeof(p2port), stdin );
+      z = strchr(p2port, '\n');
+      *z = 0;
+      short port2 = atoi(p2port);
+      consd[1] = server_setup(port2);
       conconnection[1] = server_connect( consd[1] );
       printf("Player 2 controller connected!\n");
       break;
@@ -96,10 +128,20 @@ int main() {
     buffer[i] = 0;
   }
 
-  sd[0] = server_setup(9002);
+  printf("Specify disp1 Port: \n");
+  fgets( disp1port, sizeof(disp1port), stdin );
+  z = strchr(disp1port, '\n');
+  *z = 0;
+  short dport1 = atoi(disp1port);
+  sd[0] = server_setup(dport1);
   connection[0] = server_connect( sd[0] );
   printf("display 1 connected\n");
-  sd[1] = server_setup(9003);
+  printf("Specify disp2 Port: \n");
+  fgets( disp2port, sizeof(disp2port), stdin );
+  z = strchr(disp2port, '\n');
+  *z = 0;
+  short dport2 = atoi(disp2port);
+  sd[1] = server_setup(dport3);
   connection[1] = server_connect( sd[1] );
   printf("display 2 connected\n");
    
@@ -112,7 +154,9 @@ int main() {
   if ( clients[0] == 0 ) {
     //      close(sd[0]);
     while(1){
-      sub_server( connection[0], sizeof(buffer), shmem );
+      sleep(1);
+      sub_server( connection[0], sizeof(buffer), shmem1);
+      sub_server( connection[0], sizeof(buffer), shmem2);
     }
     close(sd[0]);
     exit(0);
@@ -120,64 +164,46 @@ int main() {
   if ( clients[1] == 0 ) {      
     //      close(sd[1]);
     while(1){
-      sub_server( connection[1], sizeof(buffer), shmem );
+      sleep(1);
+      sub_server( connection[1], sizeof(buffer), shmem1 );
+      sub_server( connection[1], sizeof(buffer), shmem2 );
     }
     close(sd[1]);
     exit(0);
   }
   if(clients[0]){
+    conclient[0] = fork();
+    if(conclient[0]){
+      conclient[1] = fork();
+    }
     /* close( connection[0] ); */
     /* close( connection[1] ); */
-    while (1) {
-      if(read(conconnection[0], shmem, 1)){
-	printf("GOT: %s\n", shmem);
-      }
-      /* printf("enter message: "); */
-      /* fgets( buffer, sizeof(buffer), stdin ); */
-      /* char *p = strchr(buffer, '\n'); */
-      /* *p = 0; */
-      /* strcpy(*shmem, buffer); */
-      
-    }    
-    
-      /* sleep(20); */
-    
-      /* sleep(10); */
-      /* exit(0); */
+    if(conclient[0]==0){
+      while (1) {
+	sleep(1);
+	if(read(conconnection[0], shmem1, 1)){
+	  printf("GOT: %s\n", shmem1);
+	}
+      }   
+      close(consd[0]);
+      exit(0);
+    }
+    else if(conclient[1]==0){
+      while (1) {
+	sleep(1);
+	if(read(conconnection[0], shmem2, 1)){
+	  printf("GOT: %s\n", shmem2);
+	}
+      }    
+      close(consd[1]);
+      exit(0);
+    }
+    else{
+      exit(0);
+    }
+
   }
  
-
-
-    
-
-    /* for(i = 0; i < 6; i++){ */
-    /*   printf("Client Num: %d\n", i); */
-    /*   if(!clients[i]){ */
-    /* 	printf("%d\n", i); */
-    /* 	clients[i] = f; */
-    /* 	break; */
-    /*   } */
-    /* } */
-    /* printf("2\n"); */
-    /* fflush(stdout); */
-    /* if ( f == 0 ) { */
-    /*   printf("3\n"); */
-    /*   fflush(stdout); */
-    /*   close(sd); */
-    /*   printf("4\n"); */
-    /*   fflush(stdout); */
-    /*   if(buffer[0]){ */
-    /* 	printf("%d\n", buffer[0]); */
-    /* 	sub_server( connection, buffer ); */
-    /*   } */
-    /*   printf("5\n"); */
-    /*   fflush(stdout); */
-    /*   exit(0); */
-    /* } */
-    /* else { */
-    /*   close( connection ); */
-    /* } */
-
   return 0;
 }
 
@@ -196,7 +222,7 @@ void process( char * s ) {
   }
 }
 
-int createShmem(){
+int createShmemP1(){
   int key = ftok("makefile", 22);
   int shmid;
   //Creates Shmem
@@ -205,8 +231,26 @@ int createShmem(){
   return shmid;
 }
 
-int removeShmem(){
+int createShmemP2(){
+  int key = ftok("makefile", 44);
+  int shmid;
+  //Creates Shmem
+  shmid = shmget(key, 4, IPC_CREAT | 0644);
+  printf("shmem created %d\n", shmid);
+  return shmid;
+}
+
+int removeShmemP1(){
   int key = ftok("makefile", 22);
+  int shmid = shmget(key, 0, 0);
+  struct shmid_ds d;
+  shmctl(shmid, IPC_RMID, &d);
+  printf("shared memory removed: %d\n", shmid);
+  return shmid;
+}
+
+int removeShmemP2(){
+  int key = ftok("makefile", 44);
   int shmid = shmget(key, 0, 0);
   struct shmid_ds d;
   shmctl(shmid, IPC_RMID, &d);

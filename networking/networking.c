@@ -23,6 +23,16 @@ int server_setup(int port) {
   int i;
   
   sd = socket( AF_INET, SOCK_STREAM, 0 );
+  int reuse = 1;
+  if (setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse)) < 0){
+    perror("setsockopt(SO_REUSEADDR) failed");
+  }
+
+#ifdef SO_REUSEPORT
+    if (setsockopt(sd, SOL_SOCKET, SO_REUSEPORT, (const char*)&reuse, sizeof(reuse)) < 0) 
+        perror("setsockopt(SO_REUSEPORT) failed");
+#endif
+
   error_check( sd, "server socket" );
   
   struct sockaddr_in sock;

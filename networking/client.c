@@ -21,13 +21,12 @@ int main( int argc, char *argv[] ) {
 
   char buffer[MESSAGE_BUFFER_SIZE];
 
-  sleep(5);
-  sleep(5);
   
   while(1){
     while(read( sd, buffer, sizeof(buffer))){
-      sleep(1);
+
       printf( "received: %s\n", buffer );
+      sleep(0.5);
       /* printf("enter message: "); */
       /* fgets( buffer, sizeof(buffer), stdin ); */
       /* char *p = strchr(buffer, '\n'); */
