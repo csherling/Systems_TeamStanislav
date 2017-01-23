@@ -8,8 +8,8 @@ game: clean game.c
 physics: clean physics.c
 	$(CC) physics.c physics.o -lm
 
-gfx-sdl: clean gfx-sdl.c
-	$(CC) physics.c gfx-sdl.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -lm
+gfx: clean gfx-sdl.c
+	$(CC) physics.c gfx-sdl.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -lm -o gfx
 
 clean:
 	rm -f game

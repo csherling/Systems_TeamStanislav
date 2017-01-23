@@ -29,7 +29,7 @@ int clear(SDL_Renderer* renderer) {
     SDL_RenderFillRect(renderer, NULL);
 }
 
-int draw_man(SDL_Renderer* renderer, int x, int y) {
+void draw_man(SDL_Renderer* renderer, int x, int y) {
     SDL_Rect rect;
     rect.x = x - MAN_WIDTH / 2;
     rect.y = y - MAN_HEIGHT;
@@ -39,7 +39,7 @@ int draw_man(SDL_Renderer* renderer, int x, int y) {
     SDL_RenderFillRect(renderer, &rect);
 }
 
-int draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
+void draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
     // theta is relative to horizontal, clockwise is positive
     int xf = x + (int) (cos(theta) * ARROW_LENGTH);
     int yf = y + (int) (sin(theta) * ARROW_LENGTH);
@@ -53,6 +53,20 @@ int draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
     head_dx = (int) (cos(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
     head_dy = (int) (sin(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
     SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
+}
+
+void draw_terrain(SDL_Renderer* renderer, seed s) {
+    SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
+    int prevX = 0;
+    int prevY = 0;
+    int x;
+    for (x = 0; x < SCREEN_WIDTH; x++) {
+        int y = (int) getTerrain((double) x, s);
+        printf("Terrain X,Y: %d, %d\n", x, y);
+        SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, y);
+        prevX = x;
+        prevY = y;
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -88,7 +102,6 @@ int main(int argc, char* argv[]) {
     printf("cleared screen\n");
     SDL_UpdateWindowSurface(window);
 
-    int quit = 0;
     SDL_Event e;
     int x = SCREEN_WIDTH / 2;
     int y = SCREEN_HEIGHT;
@@ -99,44 +112,62 @@ int main(int argc, char* argv[]) {
     player bob;
     bob.xcor = DISTANCE;
     bob.health = START_HEALTH;
-    arrow ar = make_arrow(1.0, 2.0);
+    arrow ar;
     ar.x = x;
     ar.y = y;
+    seed s;
+    setSeeds(&s);
 
     int shot = 0;
 
-    printf("starting loop\n");
+    int quit = 0;
+    // Draw the terrain
+    draw_terrain(renderer, s);
+    // Update screen
+    SDL_RenderPresent(renderer);
+    SDL_UpdateWindowSurface(window);
+    // Wait for user to click X button to quit
     while (!quit) {
-        // Poll events until the event queue is empty (SDL_PollEvent returns
-        // 0 when event queue is empty).
         while (SDL_PollEvent(&e) != 0) {
             if (e.type == SDL_QUIT) {
                 quit = 1;
-            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
-                shot = 1;
-            } else if (e.type == SDL_KEYDOWN) {
-                SDL_Keysym sym = e.key.keysym;
-                SDL_Keycode code = sym.sym;
-                if (code == SDLK_LEFT) {
-                    x -= 5;
-                } else if (code == SDLK_RIGHT) {
-                    x += 5;
-                }
             }
         }
-        if (shot) {
-            printf("%d\n", ar.vx);
-            shootStep(&bob, &ar);
-        }
-        clear(renderer);
-        draw_man(renderer, x, y);
-        int mx, my;
-        SDL_GetMouseState(&mx, &my);
-        double ar_angle = atan2(ar.vy, ar.vx);
-        draw_arrow(renderer, ar.x, ar.y, ar_angle);
-        SDL_RenderPresent(renderer);
-        SDL_UpdateWindowSurface(window);
     }
+
+    //printf("starting loop\n");
+    //while (!quit) {
+    //    int mx, my;
+    //    SDL_GetMouseState(&mx, &my);
+    //    double ar_angle = atan2(ar.vy, ar.vx);
+    //    // Poll events until the event queue is empty (SDL_PollEvent returns
+    //    // 0 when event queue is empty).
+    //    while (SDL_PollEvent(&e) != 0) {
+    //        if (e.type == SDL_QUIT) {
+    //            quit = 1;
+    //        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+    //            shot = 1;
+    //            ar = make_arrow(0.2, atan2(my, mx));
+    //        } else if (e.type == SDL_KEYDOWN) {
+    //            SDL_Keysym sym = e.key.keysym;
+    //            SDL_Keycode code = sym.sym;
+    //            if (code == SDLK_LEFT) {
+    //                x -= 5;
+    //            } else if (code == SDLK_RIGHT) {
+    //                x += 5;
+    //            }
+    //        }
+    //    }
+    //    if (shot) {
+    //        printf("%f.1\n", ar.vx);
+    //        shootStep(&bob, &ar, s);
+    //    }
+    //    clear(renderer);
+    //    draw_man(renderer, x, y);
+    //    draw_arrow(renderer, ar.x, ar.y, ar_angle);
+    //    SDL_RenderPresent(renderer);
+    //    SDL_UpdateWindowSurface(window);
+    //}
 
     SDL_DestroyWindow(window);
 
