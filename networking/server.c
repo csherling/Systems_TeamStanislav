@@ -76,7 +76,7 @@ int main() {
       fgets( p1port, sizeof(p1port), stdin );
       z = strchr(p1port, '\n');
       *z = 0;
-      short port1 = atoi(p1port);
+      int port1 = atoi(p1port);
       consd[0] = server_setup(port1);
       conconnection[0] = server_connect( consd[0] );
       printf("Player controller connected!\n");
@@ -88,7 +88,7 @@ int main() {
       fgets( p1port, sizeof(p1port), stdin );
       z = strchr(p1port, '\n');
       *z = 0;
-      short port1 = atoi(p1port);
+      int port1 = atoi(p1port);
       consd[0] = server_setup(port1);
       conconnection[0] = server_connect( consd[0] );
       printf("Player 1 controller connected!\n");
@@ -96,7 +96,7 @@ int main() {
       fgets( p2port, sizeof(p2port), stdin );
       z = strchr(p2port, '\n');
       *z = 0;
-      short port2 = atoi(p2port);
+      int port2 = atoi(p2port);
       consd[1] = server_setup(port2);
       conconnection[1] = server_connect( consd[1] );
       printf("Player 2 controller connected!\n");
@@ -132,7 +132,7 @@ int main() {
   fgets( disp1port, sizeof(disp1port), stdin );
   z = strchr(disp1port, '\n');
   *z = 0;
-  short dport1 = atoi(disp1port);
+  int dport1 = atoi(disp1port);
   sd[0] = server_setup(dport1);
   connection[0] = server_connect( sd[0] );
   printf("display 1 connected\n");
@@ -140,8 +140,8 @@ int main() {
   fgets( disp2port, sizeof(disp2port), stdin );
   z = strchr(disp2port, '\n');
   *z = 0;
-  short dport2 = atoi(disp2port);
-  sd[1] = server_setup(dport3);
+  int dport2 = atoi(disp2port);
+  sd[1] = server_setup(dport2);
   connection[1] = server_connect( sd[1] );
   printf("display 2 connected\n");
    
