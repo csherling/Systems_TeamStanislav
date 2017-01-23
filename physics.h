@@ -15,12 +15,21 @@ typedef struct arrow {
     double vx;
     double vy;
 } arrow;
+
 typedef struct seed{
   double s1;
   double s2;
   double s3;
   double s4;
 } seed;
+
+typedef struct gamedata {
+    arrow ar;
+    seed terrain_seed;
+    player player1;
+    player player2;
+} gamedata;
+
 arrow make_arrow(double v, double angle);
 char shoot(player *shooter, player *target, arrow *arrow, seed s);
 int shootStep(player *target, arrow *arrow, seed s);
