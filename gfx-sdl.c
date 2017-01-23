@@ -43,28 +43,14 @@ void draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
     SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
 }
 
-void draw_terrain_1(SDL_Renderer* renderer, int* terrain, int width) {
-    SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
-    int prevX = 0;
-    int prevY = 0;
-    int x;
-    for (x = 0; x < width; x+=1) {
-        //int y = (int) getTerrain((double) x, s);
-        int y = terrain[x];
-        printf("Terrain X,Y: %d, %d\n", x, y);
-        SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, SCREEN_HEIGHT - y);
-        prevX = x;
-        prevY = y;
-    }
-}
-
-void draw_terrain_2(SDL_Renderer* renderer, seed s) {
+void draw_terrain(SDL_Renderer* renderer, seed s) {
     SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
     int prevX = 0;
     int prevY = 0;
     int x;
     for (x = 0; x < SCREEN_WIDTH; x+=1) {
-        int y = (int) getTerrain((double) x, s);
+        int y = (int) getTerrain(((double) x) * 0.1, s) / 10 + 40;
+        y = fmax(0.0, y);
         printf("Terrain X,Y: %d, %d\n", x, y);
         SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, SCREEN_HEIGHT - y);
         prevX = x;
@@ -72,16 +58,14 @@ void draw_terrain_2(SDL_Renderer* renderer, seed s) {
     }
 }
 
-int main(int argc, char* argv[]) {
-    srand(time(NULL));
-    printf("atan2(1, 0) = %f.1\n", atan2(1, 0));
+SDL_Renderer* init_SDL2(SDL_Window **window) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         printf("ERROR: SDL_Init failed: SDL_Error: %s\n", SDL_GetError());
         exit(1);
     }
 
-    //Create window
-    SDL_Window* window =
+    // Create window
+    *window =
         SDL_CreateWindow(
                 "Archery in an Hour(TM)",
                 SDL_WINDOWPOS_UNDEFINED,
@@ -89,22 +73,37 @@ int main(int argc, char* argv[]) {
                 SCREEN_WIDTH,
                 SCREEN_HEIGHT,
                 SDL_WINDOW_SHOWN);
-    if( window == NULL ) {
+    if( *window == NULL ) {
         printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError() );
         exit(1);
     }
 
-    // Get window surface
-    //SDL_Surface* screen = SDL_GetWindowSurface(window);
-
-    printf("about to create renderer\n");
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
-    printf("created renderer\n");
+    SDL_Renderer* renderer = SDL_CreateRenderer(*window, -1, 0);
 
     // Fill the window white
     clear(renderer);
-    printf("cleared screen\n");
+    SDL_UpdateWindowSurface(*window);
+
+    return renderer;
+}
+
+void end_SDL2(SDL_Window* window) {
+    // Destroy window
+    SDL_DestroyWindow(window);
+    // Quit SDL subsystems
+    SDL_Quit();
+}
+
+void update_SDL2(SDL_Window* window, SDL_Renderer* renderer) {
+    // Update screen
+    SDL_RenderPresent(renderer);
+    // Update window to screen surface
     SDL_UpdateWindowSurface(window);
+}
+
+int test_terrain() {
+    SDL_Window* window;
+    SDL_Renderer* renderer = init_SDL2(&window);
 
     SDL_Event e;
     int x = SCREEN_WIDTH / 2;
@@ -122,20 +121,13 @@ int main(int argc, char* argv[]) {
     seed s;
     setSeeds(&s);
 
-    int shot = 0;
-
-    int quit = 0;
-
-    // Draw the terrain (random slope method)
-    int terrain[SCREEN_WIDTH];
-    genTerrain(terrain, SCREEN_WIDTH);
-    draw_terrain_1(renderer, terrain, SCREEN_WIDTH);
-    // Draw the terrain (random trig method)
-    //draw_terrain_2(renderer, s);
+    draw_terrain(renderer, s);
 
     // Update screen
-    SDL_RenderPresent(renderer);
-    SDL_UpdateWindowSurface(window);
+    update_SDL2(window, renderer);
+
+    int shot = 0;
+    int quit = 0;
     // Wait for user to click X button to quit
     while (!quit) {
         while (SDL_PollEvent(&e) != 0) {
@@ -145,42 +137,5 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    //printf("starting loop\n");
-    //while (!quit) {
-    //    int mx, my;
-    //    SDL_GetMouseState(&mx, &my);
-    //    double ar_angle = atan2(ar.vy, ar.vx);
-    //    // Poll events until the event queue is empty (SDL_PollEvent returns
-    //    // 0 when event queue is empty).
-    //    while (SDL_PollEvent(&e) != 0) {
-    //        if (e.type == SDL_QUIT) {
-    //            quit = 1;
-    //        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
-    //            shot = 1;
-    //            ar = make_arrow(0.2, atan2(my, mx));
-    //        } else if (e.type == SDL_KEYDOWN) {
-    //            SDL_Keysym sym = e.key.keysym;
-    //            SDL_Keycode code = sym.sym;
-    //            if (code == SDLK_LEFT) {
-    //                x -= 5;
-    //            } else if (code == SDLK_RIGHT) {
-    //                x += 5;
-    //            }
-    //        }
-    //    }
-    //    if (shot) {
-    //        printf("%f.1\n", ar.vx);
-    //        shootStep(&bob, &ar, s);
-    //    }
-    //    clear(renderer);
-    //    draw_man(renderer, x, y);
-    //    draw_arrow(renderer, ar.x, ar.y, ar_angle);
-    //    SDL_RenderPresent(renderer);
-    //    SDL_UpdateWindowSurface(window);
-    //}
-
-    SDL_DestroyWindow(window);
-
-    // Quit SDL subsystems
-    SDL_Quit();
+    end_SDL2(window);
 }
