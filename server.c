@@ -176,9 +176,11 @@ int main() {
       read(conconnection[0], &p1, sizeof(p1));
       *shmem1 = p1.velocity;
       printf("GOT: %lf, %lf, %lf\n", p1.velocity, p1.theta, p1.distance);
-      read(conconnection[0], &p2, sizeof(p2));
-      *shmem2 = p2.velocity;
-      printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
+      if (conconnection[1]) {
+          read(conconnection[1], &p2, sizeof(p2));
+          *shmem2 = p2.velocity;
+          printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
+      }
     }
     printf("Exiting controller reader\n");
     fflush(stdout);
