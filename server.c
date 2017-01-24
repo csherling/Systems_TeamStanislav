@@ -35,6 +35,32 @@ int main() {
 
   umask(0000);
 
+  int rctrfd = open("matchctr", O_RDWR);
+
+  char rctr[5];
+  int y;
+  for(y = 0; y<5; y++){
+    rctr[y] = 0;
+  }
+  read(rctrfd, rctr, 4);
+  lseek(rctrfd, 0, SEEK_SET);
+  char newrctr[5];
+  for(y = 0; y<5; y++){
+    newrctr[y] = 0;
+  }
+  snprintf(newrctr, 5, "%d", atoi(rctr) + 1);
+  write(rctrfd, newrctr,sizeof(newrctr));
+  close(rctrfd);
+    
+  int recordfd;
+  char filnam[23];
+  strcpy(filnam, "matchrecords/match");
+  strcat(filnam, rctr);
+  recordfd = open(filnam, O_CREAT | O_RDWR, 0644);
+
+
+
+  
   int consd[2];
   int conconnection[2];
   int conclient;
@@ -60,11 +86,8 @@ int main() {
   int shmid1 = createShmemP1();
   int shmid2 = createShmemP2();
 
-  double *shmem1 = shmat(shmid1, 0, 0);
-  *shmem1 = 1.0;
-
-  double *shmem2 = shmat(shmid2, 0, 0);
-  *shmem2 = 2.0;
+  gamedata *shmem1 = shmat(shmid1, 0, 0);
+  gamedata *shmem2 = shmat(shmid2, 0, 0);
 
   consd[0] = 0;
   consd[1] = 0;
@@ -188,16 +211,17 @@ int main() {
   display(0,1,s);
   while (p1.health>0&&p2.health>0) {
     sleep(1);
-      read(conconnection[0], &shot1, sizeof(shot1));
-      *shmem1 = shot1.velocity;
-      printf("GOT: %lf, %lf, %lf\n", shot1.velocity, shot1.theta, shot1.distance);
-      arrow arrow1 = make_arrow(shot1.velocity, shot1.theta*M_PI/180);
-      move(&p1, shot1.distance);
-      //shoot(&p1, &p2, &arrow1, s);
+    read(conconnection[0], &shot1, sizeof(shot1));
+    printf("GOT: %lf, %lf, %lf\n", shot1.velocity, shot1.theta, shot1.distance);
+    write(recordfd,&shot1,sizeof(shot1));
+    arrow arrow1 = make_arrow(shot1.velocity, shot1.theta*M_PI/180);
+    move(&p1, shot1.distance);
+    //shoot(&p1, &p2, &arrow1, s);
     arrow1.x = p1.xcor;
     arrow1.y = PLAYER_HEIGHT+getTerrain(p1.xcor, s);
     while(arrow1.y>=0+getTerrain(arrow1.x, s)){
       shootStep(&p1,&p2, &arrow1, s, &currentdata);
+      *shmem1 = currentdata;
       printdata(currentdata);
     }
     if(signum(arrow1.vx)*(p2.xcor - arrow1.x)<0){
@@ -205,31 +229,32 @@ int main() {
     }else{
       undershoot(fabs(p2.xcor - arrow1.x));
     }
-      if (conconnection[1]) {
-          read(conconnection[1], &shot2, sizeof(shot2));
-          *shmem2 = shot2.velocity;
-          printf("GOT: %lf, %lf, %lf\n", shot2.velocity, shot2.theta, shot2.distance);
+    if (conconnection[1]) {
+      read(conconnection[1], &shot2, sizeof(shot2));
+      printf("GOT: %lf, %lf, %lf\n", shot2.velocity, shot2.theta, shot2.distance);
+      write(recordfd,&shot2,sizeof(shot2));
       arrow arrow2 = make_arrow(shot2.velocity, (180 - shot2.theta) *M_PI/180);
       move(&p2, -shot2.distance);
       //shoot(&p2, &p2, &arrow2, s);
-    arrow2.x = p2.xcor;
-    arrow2.y = PLAYER_HEIGHT+getTerrain(p2.xcor, s);
-    while(arrow2.y>=0+getTerrain(arrow2.x, s)){
-      shootStep(&p2,&p1, &arrow2, s, &currentdata);
-    }
-    if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
-      overshoot(fabs(arrow2.x - p1.xcor));
-    }else{
-      undershoot(fabs(p1.xcor - arrow2.x));
-    }      
+      arrow2.x = p2.xcor;
+      arrow2.y = PLAYER_HEIGHT+getTerrain(p2.xcor, s);
+      while(arrow2.y>=0+getTerrain(arrow2.x, s)){
+	shootStep(&p2,&p1, &arrow2, s, &currentdata);
+	*shmem2 = currentdata;
       }
+      if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
+	overshoot(fabs(arrow2.x - p1.xcor));
+      }else{
+	undershoot(fabs(p1.xcor - arrow2.x));
+      }      
     }
-    printf("Exiting controller reader\n");
-    fflush(stdout);
-    close(consd[0]);
-    close(consd[1]);
-    exit(0);
-/* } */
+  }
+  printf("Exiting controller reader\n");
+  fflush(stdout);
+  close(consd[0]);
+  close(consd[1]);
+  exit(0);
+  /* } */
 
   return 0;
 }
