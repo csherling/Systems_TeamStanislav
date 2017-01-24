@@ -7,6 +7,7 @@
 //#include <SDL_keyboard.h>
 //#include <SDL_keycode.h>
 
+#include "constants.h"
 #include "gfx-sdl.h"
 #include "networking.h"
 #include "physics.h"

@@ -4,9 +4,6 @@
 
 #define GFX_SDL_H
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
 #define MAN_WIDTH 10
 #define MAN_HEIGHT 30
 #define MAN_R 0xAA

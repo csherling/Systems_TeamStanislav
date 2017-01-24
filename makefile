@@ -28,7 +28,7 @@ networking.o: networking.c networking.h
 	gcc -c networking.c
 
 game: clean game.c
-	$(CC) physics.c game.c -o game $(SDL_CFLAGS) $(SDL_LDFLAGS) -lm
+	$(CC) physics.c game.c -o game -lm
 
 physics.o: physics.c
 	$(CC) -o physics.o -c physics.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -lm
