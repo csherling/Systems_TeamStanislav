@@ -198,10 +198,10 @@ int main() {
     //}
     //RUNS GAME
     player p1;
-    p1.xcor = 0;
+    p1.xcor = 50;
     p1.health = START_HEALTH;
     player p2;
-    p2.xcor = 200;
+    p2.xcor = 350;
     p2.health = START_HEALTH;
     seed s;
     gamedata currentdata;
@@ -209,6 +209,10 @@ int main() {
     currentdata.terrain_seed = s;
     printf("OY WHATS GOING ON\n");
     display(0,1,s);
+    sub_server( connection[0], sizeof(gamedata), shmem1);
+    sub_server( connection[1], sizeof(gamedata), shmem1);
+    sub_server( connection[0], sizeof(gamedata), shmem2);
+    sub_server( connection[1], sizeof(gamedata), shmem2);
     while (p1.health>0&&p2.health>0) {
         sleep(1);
         read(conconnection[0], &shot1, sizeof(shot1));
@@ -219,12 +223,13 @@ int main() {
         //shoot(&p1, &p2, &arrow1, s);
         arrow1.x = p1.xcor;
         arrow1.y = PLAYER_HEIGHT+getTerrain(p1.xcor, s);
-        while(arrow1.y>=0+getTerrain(arrow1.x, s)){
+        while(arrow1.y>=0){//+getTerrain(arrow1.x, s)){
             shootStep(&p1,&p2, &arrow1, s, &currentdata);
             *shmem1 = currentdata;
             sub_server( connection[0], sizeof(gamedata), shmem1);
             sub_server( connection[1], sizeof(gamedata), shmem1);
             printdata(currentdata);
+            sleep(0.03);
         }
         if(signum(arrow1.vx)*(p2.xcor - arrow1.x)<0){
             overshoot(fabs(arrow1.x - p2.xcor));
@@ -245,6 +250,7 @@ int main() {
                 *shmem2 = currentdata;
                 sub_server( connection[0], sizeof(gamedata), shmem2);
                 sub_server( connection[1], sizeof(gamedata), shmem2);
+                sleep(0.03);
             }
             if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
                 overshoot(fabs(arrow2.x - p1.xcor));
