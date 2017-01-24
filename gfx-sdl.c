@@ -16,7 +16,7 @@ int clear(SDL_Renderer* renderer) {
 void draw_man(SDL_Renderer* renderer, int x, int y) {
     SDL_Rect rect;
     rect.x = x - MAN_WIDTH / 2;
-    rect.y = y - MAN_HEIGHT;
+    rect.y = SCREEN_HEIGHT - y - 2 * MAN_HEIGHT;
     rect.w = MAN_WIDTH;
     rect.h = MAN_HEIGHT;
     SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
@@ -27,16 +27,16 @@ void draw_arrow(SDL_Renderer* renderer, int x, int y, double theta) {
     // theta is relative to horizontal, clockwise is positive
     int xf = x + (int) (cos(theta) * ARROW_LENGTH);
     int yf = y + (int) (sin(theta) * ARROW_LENGTH);
-    SDL_RenderDrawLine(renderer, x, y, xf, yf);
+    SDL_RenderDrawLine(renderer, x, SCREEN_HEIGHT - y, xf, SCREEN_HEIGHT - yf);
     // head_dx and head_dy are the x and y deltas form the arrow's head
     // to the end of the first line coming off of it.
     int head_dx = (int) (cos(theta - ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
     int head_dy = (int) (sin(theta - ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
-    SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
+    SDL_RenderDrawLine(renderer, xf, SCREEN_HEIGHT - yf, xf - head_dx, SCREEN_HEIGHT - (yf - head_dy));
     // set head_dx and head_dy to deltas for other line coming off of arrow's head
     head_dx = (int) (cos(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
     head_dy = (int) (sin(theta + ARROW_HEAD_ANGLE) * ARROW_HEAD_LEN);
-    SDL_RenderDrawLine(renderer, xf, yf, xf - head_dx, yf - head_dy);
+    SDL_RenderDrawLine(renderer, xf, SCREEN_HEIGHT - yf, xf - head_dx, SCREEN_HEIGHT - (yf - head_dy));
 }
 
 void draw_terrain(SDL_Renderer* renderer, seed s) {

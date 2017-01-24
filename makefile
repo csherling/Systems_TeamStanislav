@@ -37,9 +37,11 @@ gfx-sdl.o: gfx-sdl.c
 	$(CC) -c gfx-sdl.c $(SDL_CFLAGS) $(SDL_LDFLAGS) -lm
 
 clean:
+	rm -f graphic-client
+	rm -f client
+	rm -f controller
+	rm -f server
 	rm -f game
-	rm -f gfx-sdl
-	rm -f a.out
 	rm -f *.o
 	rm -f *~
 
