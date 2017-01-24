@@ -69,10 +69,11 @@ int shootStep(
   processCor(arrow->x, arrow->y,atan2(arrow->vy, arrow->vx));
   if(arrow->x >= target->xcor && arrow->x <= target->xcor + PLAYER_WIDTH){
     if(arrow->y<=PLAYER_HEIGHT+getTerrain(target->xcor, s)){
-      kill(target);
+      killplayer(target);
       return 1;
     }
   }
+  return 0;
 }
 
 void processCor(double x, double y, double theta){
@@ -90,7 +91,7 @@ void move(player *shooter, double distance){
   printf("Moved %f\n", distance);
 }
 
-void kill(player *p){
+void killplayer(player *p){
   p->health-=1;
   printf("HIT! new health: %d\n",p->health);
 }

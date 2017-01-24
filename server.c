@@ -9,8 +9,10 @@
 #include <sys/shm.h>
 #include <string.h>
 #include <math.h>
+
 #include "physics.h"
 #include "networking.h"
+#include "constants.h"
 
 static void sighandler(int signo){
   if(signo == SIGINT){
@@ -181,6 +183,8 @@ int main() {
   p2.health = START_HEALTH;
   seed s;
   setSeeds(&s);
+  printf("OY WHATS GOING ON\n");
+  display(0,1,s);
   while (p1.health>0&&p2.health>0) {
     sleep(1);
       read(conconnection[0], &shot1, sizeof(shot1));
