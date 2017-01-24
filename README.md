@@ -12,11 +12,11 @@
     * <ip> is the ip of the computer running the server function
     * <port> is the port from step 1
 3. On the server terminal enter a port for the second controller, and repeat step 2, this time using the new port
-4. On the server terminal enter a port for the first display
-5. Select another computer or terminal to be the first "client"
+4. On the server terminal enter a port number for the first display
+5. Select another computer or terminal to be the first "client"/display
     * run ./graphic-client <ip> <port>
     * <ip> is the ip of the computer running the server function
-    * <port> is the port from step 5
+    * <port> is the port from step 4
 6. On the server terminal enter a port for the second client, and repeat step 5, this time using the new port
 7. Enter commands into the "controller" terminals following the prompts. As a reminder the format for inputs is "<velocity>,<angle>,<distance>" where velocity and angle are in regard to the arrow, and distance is how far you wish the player to move.
 
