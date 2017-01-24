@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <SDL.h>
 #include <math.h>
 #include <string.h>
 #include <time.h> //does time exist tho?

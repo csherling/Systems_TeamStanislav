@@ -1,5 +1,7 @@
 #ifndef GFX_SDL_H
 
+#include "physics.h"
+
 #define GFX_SDL_H
 
 #define SCREEN_WIDTH 640
@@ -16,3 +18,14 @@
 #define ARROW_HEAD_LEN 6
 
 #endif
+
+int clear(SDL_Renderer* renderer);
+
+void draw_man(SDL_Renderer* renderer, int x, int y);
+void draw_arrow(SDL_Renderer* renderer, int x, int y, double theta);
+
+void draw_terrain(SDL_Renderer* renderer, seed s);
+SDL_Renderer* init_SDL2(SDL_Window **window);
+void end_SDL2(SDL_Window* window);
+void update_SDL2(SDL_Window* window, SDL_Renderer* renderer);
+int test_terrain();

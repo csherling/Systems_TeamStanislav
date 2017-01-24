@@ -7,11 +7,6 @@
 #include "physics.h"
 #include "gfx-sdl.h"
 
-typedef struct {
-    int x;
-    int y;
-} archer;
-
 int clear(SDL_Renderer* renderer) {
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0xFF, 255);
     SDL_RenderFillRect(renderer, NULL);
