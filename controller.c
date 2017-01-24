@@ -35,15 +35,25 @@ int main( int argc, char *argv[] ) {
   int msgsize = 0;
   int i = 0;
 
+  char* distance;
+  char velocity[10];
+  char theta[10];
+  
   while (1) {
     printf("enter message: ");
     fflush(stdout);
     fgets( buffer, sizeof(buffer), stdin );
-    char *p = strchr(buffer, '\n');
-    *p = 0;
+    *strstr(buffer, "\n")=0;
+    distance=buffer;
+    strcpy(velocity,strsep(&distance, ","));
+    strcpy(theta,strsep(&distance, ","));
+    shot s;
+    s.velocity=atof(velocity);
+    s.theta=atof(theta);
+    s.distance=atof(distance);
     /* for(msgsize = 0; buffer[msgsize]; msgsize++); */
-    write( sd, buffer, 1 );
-    printf("Sent: %s\n", buffer);
+    write( sd, &s, 1 );
+    printf("Sent: %f %f %f \n", s.velocity, s.theta, s.distance);
     /* for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){ */
     /*   buffer[i] = 0; */
     /* } */

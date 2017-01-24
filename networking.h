@@ -3,6 +3,11 @@
 
 #define MESSAGE_BUFFER_SIZE 1000
 
+typedef struct shot {
+  double velocity;
+  double theta;
+  double distance;
+} shot;
 void error_check( int i, char *s );
 
 int server_setup(int port);
