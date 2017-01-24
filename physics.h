@@ -29,6 +29,7 @@ typedef struct gamedata {
     int display_index;
 } gamedata;
 
+double signum(double x);
 arrow make_arrow(double v, double angle);
 char shoot(player *shooter, player *target, arrow *arrow, seed s);
 int shootStep(player *shooter, player *target, arrow *arrow, seed s, gamedata *data);

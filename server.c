@@ -202,7 +202,7 @@ int main() {
   p1.xcor = 0;
   p1.health = START_HEALTH;
   player p2;
-  p2.xcor = DISTANCE;
+  p2.xcor = 200;
   p2.health = START_HEALTH;
   seed s;
   gamedata currentdata;
@@ -261,9 +261,6 @@ int main() {
 
 
 void sub_server( int sd, int sbuff, gamedata * shmem ) {
-  printf("GOT HERE\n");
-  printf("%lf\n", *shmem);
-  fflush(stdout);
   write( sd, shmem, sbuff);
 }
 void process( char * s ) {
@@ -278,7 +275,7 @@ int createShmemP1(){
   int key = ftok("makefile", 22);
   int shmid;
   //Creates Shmem
-  shmid = shmget(key, 4, IPC_CREAT | 0644);
+  shmid = shmget(key, sizeof(gamedata), IPC_CREAT | 0644);
   printf("shmem created %d\n", shmid);
   return shmid;
 }
@@ -287,7 +284,7 @@ int createShmemP2(){
   int key = ftok("makefile", 44);
   int shmid;
   //Creates Shmem
-  shmid = shmget(key, 4, IPC_CREAT | 0644);
+  shmid = shmget(key, sizeof(gamedata), IPC_CREAT | 0644);
   printf("shmem created %d\n", shmid);
   return shmid;
 }

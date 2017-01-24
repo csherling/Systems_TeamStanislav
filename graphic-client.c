@@ -23,6 +23,8 @@ int main( int argc, char *argv[] ) {
 
     gamedata buffer;
 
+    read( sd, &buffer, sizeof(buffer));
+
     SDL_Window* window;
     SDL_Renderer* renderer = init_SDL2(&window);
     SDL_Event e;
@@ -38,7 +40,7 @@ int main( int argc, char *argv[] ) {
             }
             if (read( sd, &buffer, sizeof(buffer))){
                 printf("recieved game update:\n");
-                sleep(0.5);
+                sleep(0.03);
             }
         }
         clear(renderer);
