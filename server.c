@@ -47,21 +47,27 @@ int main() {
   char *z;
   shot p1;
   shot p2;
+  char tmp[10];
+  char tmp1[10];
+  char tmp2[10];
+  char tmp3[10];
+  char tmp4[10];
+  char tmp5[10];
 
   int shmid1 = createShmemP1();
   int shmid2 = createShmemP2();
 
   double *shmem1 = shmat(shmid1, 0, 0);
-  shmem1 = 0;
+  *shmem1 = 1.0;
 
   double *shmem2 = shmat(shmid2, 0, 0);
-  shmem2 = 0;
+  *shmem2 = 2.0;
 
   consd[0] = 0;
   consd[1] = 0;
   conconnection[0] = 0;
   conconnection[1] = 0;
-  conclient = 0;
+  conclient = 1;
 
   while(1){
     printf("how many players are playing? (1/2): \n");
@@ -120,7 +126,7 @@ int main() {
   connection[0] = 0;
   connection[1] = 0;
   
-  int client = 0;//list of client pids
+  int client = 1;//list of client pids
 
   char buffer[MESSAGE_BUFFER_SIZE];
   int i;
@@ -147,9 +153,9 @@ int main() {
    
 
   client = fork();
-  if(client){
-    conclient = fork();
-  }
+  /* if(client){ */
+  /*   conclient = fork(); */
+  /* } */
   
   if ( client == 0 ) {
     while(1){
@@ -159,24 +165,38 @@ int main() {
       sub_server( connection[1], sizeof(double), shmem1);
       sub_server( connection[1], sizeof(double), shmem2);
     }
+    printf("Exiting client writer\n");
+    fflush(stdout);
     close(sd[0]);
     close(sd[1]);
     exit(0);
   }
-  if(conclient==0){
+  /* else if(conclient==0){ */
     while (1) {
       sleep(1);
-      read(conconnection[0], &p1, sizeof(shot));
+      read(conconnection[0], tmp, 10);
+      p1.velocity = atof(tmp);
+      read(conconnection[0], tmp1, 10);
+      p1.theta = atof(tmp1);
+      read(conconnection[0], tmp2, 10);
+      p1.distance = atof(tmp2);
       *shmem1 = p1.velocity;
       printf("GOT: %lf, %lf, %lf\n", p1.velocity, p1.theta, p1.distance);
-      read(conconnection[1], &p2, sizeof(shot));
+      read(conconnection[1], tmp3, 10);
+      p2.velocity = atof(tmp3);
+      read(conconnection[1], tmp4, 10);
+      p2.theta = atof(tmp4);
+      read(conconnection[1], tmp5, 10);
+      p2.distance = atof(tmp5);
       *shmem2 = p2.velocity;
       printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
     }    
+    printf("Exiting controller reader\n");
+    fflush(stdout);
     close(consd[0]);
     close(consd[1]);
     exit(0);
-}
+/* } */
  
   return 0;
 }

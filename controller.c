@@ -47,13 +47,15 @@ int main( int argc, char *argv[] ) {
     distance=buffer;
     strcpy(velocity,strsep(&distance, ","));
     strcpy(theta,strsep(&distance, ","));
-    shot s;
-    s.velocity=atof(velocity);
-    s.theta=atof(theta);
-    s.distance=atof(distance);
+    /* shot s; */
+    /* s.velocity=atof(velocity); */
+    /* s.theta=atof(theta); */
+    /* s.distance=atof(distance); */
     /* for(msgsize = 0; buffer[msgsize]; msgsize++); */
-    write( sd, &s, 1 );
-    printf("Sent: %f %f %f \n", s.velocity, s.theta, s.distance);
+    write( sd, velocity, 10 );
+    write( sd, theta, 10 );
+    write( sd, distance, 10 );
+    printf("Sent: %s %s %s \n", velocity, theta, distance);
     /* for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){ */
     /*   buffer[i] = 0; */
     /* } */
