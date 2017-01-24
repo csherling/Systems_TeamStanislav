@@ -34,7 +34,7 @@ int main() {
 
   int consd[2];
   int conconnection[2];
-  int conclient[2];
+  int conclient;
   char numplayers[10];
   char p1port[6];
   char p2port[6];
@@ -61,8 +61,7 @@ int main() {
   consd[1] = 0;
   conconnection[0] = 0;
   conconnection[1] = 0;
-  conclient[0] = 0;
-  conclient[1] = 0;
+  conclient = 0;
 
   while(1){
     printf("how many players are playing? (1/2): \n");
@@ -121,13 +120,10 @@ int main() {
   connection[0] = 0;
   connection[1] = 0;
   
-  int clients[6];//list of client pids
-  int i;
-  for(i = 0; i < 6; i++){
-    clients[i] = 0;
-  }//sets all to zero
+  int client = 0;//list of client pids
 
   char buffer[MESSAGE_BUFFER_SIZE];
+  int i;
   for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){
     buffer[i] = 0;
   }
@@ -150,63 +146,36 @@ int main() {
   printf("display 2 connected\n");
    
 
-  clients[0] = fork();
-  if(clients[0]){
-    clients[1] = fork();
+  client = fork();
+  if(client){
+    conclient = fork();
   }
   
-  if ( clients[0] == 0 ) {
+  if ( client == 0 ) {
     //      close(sd[0]);
     while(1){
       sleep(1);
       sub_server( connection[0], sizeof(buffer), shmem1);
       sub_server( connection[0], sizeof(buffer), shmem2);
-    }
-    close(sd[0]);
-    exit(0);
-  }
-  if ( clients[1] == 0 ) {      
-    //      close(sd[1]);
-    while(1){
-      sleep(1);
       sub_server( connection[1], sizeof(buffer), shmem1);
       sub_server( connection[1], sizeof(buffer), shmem2);
     }
+    close(sd[0]);
     close(sd[1]);
     exit(0);
   }
-  if(clients[0]){
-    conclient[0] = fork();
-    if(conclient[0]){
-      conclient[1] = fork();
-    }
-    /* close( connection[0] ); */
-    /* close( connection[1] ); */
-    if(conclient[0]==0){
-      while (1) {
-	sleep(1);
-	if(read(conconnection[0], shmem1, 1)){
-	  printf("GOT: %s\n", shmem1);
-	}
-      }   
-      close(consd[0]);
-      exit(0);
-    }
-    else if(conclient[1]==0){
-      while (1) {
-	sleep(1);
-	if(read(conconnection[1], shmem2, 1)){
-	  printf("GOT: %s\n", shmem2);
-	}
-      }    
-      close(consd[1]);
-      exit(0);
-    }
-    else{
-      exit(0);
-    }
-
-  }
+  if(conclient==0){
+    while (1) {
+      sleep(1);
+      read(conconnection[0], shmem1, 1);
+      printf("GOT: %s\n", shmem1);
+      read(conconnection[1], shmem2, 1);
+      printf("GOT: %s\n", shmem2);
+    }    
+    close(consd[0]);
+    close(consd[1]);
+    exit(0);
+}
  
   return 0;
 }

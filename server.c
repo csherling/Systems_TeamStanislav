@@ -8,7 +8,7 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <string.h>
-#include "game.h"
+
 #include "networking.h"
 
 static void sighandler(int signo){
@@ -22,7 +22,7 @@ static void sighandler(int signo){
 }
 
 void process( char * s );
-void sub_server( int sd, int sbuff, char shmem[] );
+void sub_server( int sd, int sbuff, double * shmem );
 int createShmemP1();
 int createShmemP2();
 int removeShmemP1();
@@ -34,7 +34,7 @@ int main() {
 
   int consd[2];
   int conconnection[2];
-  int conclient[2];
+  int conclient;
   char numplayers[10];
   char p1port[6];
   char p2port[6];
@@ -45,24 +45,23 @@ int main() {
   char disp5port[6];
   char disp6port[6];
   char *z;
+  shot p1;
+  shot p2;
 
   int shmid1 = createShmemP1();
   int shmid2 = createShmemP2();
 
-  char *shmem1 = shmat(shmid1, 0, 0);
-  shmem1[0] = '1';
-  shmem1[1] = 0;
+  double *shmem1 = shmat(shmid1, 0, 0);
+  shmem1 = 0;
 
-  char *shmem2 = shmat(shmid2, 0, 0);
-  shmem2[0] = '2';
-  shmem2[1] = 0;
+  double *shmem2 = shmat(shmid2, 0, 0);
+  shmem2 = 0;
 
   consd[0] = 0;
   consd[1] = 0;
   conconnection[0] = 0;
   conconnection[1] = 0;
-  conclient[0] = 0;
-  conclient[1] = 0;
+  conclient = 0;
 
   while(1){
     printf("how many players are playing? (1/2): \n");
@@ -121,13 +120,10 @@ int main() {
   connection[0] = 0;
   connection[1] = 0;
   
-  int clients[6];//list of client pids
-  int i;
-  for(i = 0; i < 6; i++){
-    clients[i] = 0;
-  }//sets all to zero
+  int client = 0;//list of client pids
 
   char buffer[MESSAGE_BUFFER_SIZE];
+  int i;
   for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){
     buffer[i] = 0;
   }
@@ -150,71 +146,45 @@ int main() {
   printf("display 2 connected\n");
    
 
-  clients[0] = fork();
-  if(clients[0]){
-    clients[1] = fork();
+  client = fork();
+  if(client){
+    conclient = fork();
   }
   
-  if ( clients[0] == 0 ) {
-    //      close(sd[0]);
+  if ( client == 0 ) {
     while(1){
       sleep(1);
-      sub_server( connection[0], sizeof(buffer), shmem1);
-      sub_server( connection[0], sizeof(buffer), shmem2);
+      sub_server( connection[0], sizeof(double), shmem1);
+      sub_server( connection[0], sizeof(double), shmem2);
+      sub_server( connection[1], sizeof(double), shmem1);
+      sub_server( connection[1], sizeof(double), shmem2);
     }
     close(sd[0]);
-    exit(0);
-  }
-  if ( clients[1] == 0 ) {      
-    //      close(sd[1]);
-    while(1){
-      sleep(1);
-      sub_server( connection[1], sizeof(buffer), shmem1);
-      sub_server( connection[1], sizeof(buffer), shmem2);
-    }
     close(sd[1]);
     exit(0);
   }
-  if(clients[0]){
-    conclient[0] = fork();
-    if(conclient[0]){
-      conclient[1] = fork();
-    }
-    /* close( connection[0] ); */
-    /* close( connection[1] ); */
-    if(conclient[0]==0){
-      while (1) {
-	sleep(1);
-	if(read(conconnection[0], shmem1, 1)){
-	  printf("GOT: %s\n", shmem1);
-	}
-      }   
-      close(consd[0]);
-      exit(0);
-    }
-    else if(conclient[1]==0){
-      while (1) {
-	sleep(1);
-	if(read(conconnection[1], shmem2, 1)){
-	  printf("GOT: %s\n", shmem2);
-	}
-      }    
-      close(consd[1]);
-      exit(0);
-    }
-    else{
-      exit(0);
-    }
-
-  }
+  if(conclient==0){
+    while (1) {
+      sleep(1);
+      read(conconnection[0], &p1, sizeof(shot));
+      *shmem1 = p1.velocity;
+      printf("GOT: %lf, %lf, %lf\n", p1.velocity, p1.theta, p1.distance);
+      read(conconnection[1], &p2, sizeof(shot));
+      *shmem2 = p2.velocity;
+      printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
+    }    
+    close(consd[0]);
+    close(consd[1]);
+    exit(0);
+}
  
   return 0;
 }
 
 
-void sub_server( int sd, int sbuff, char  shmem[] ) {
+void sub_server( int sd, int sbuff, double * shmem ) {
   printf("GOT HERE\n");
-  printf("%s\n", shmem);
+  printf("%lf\n", *shmem);
   fflush(stdout);
   write( sd, shmem, sbuff);    
 }
