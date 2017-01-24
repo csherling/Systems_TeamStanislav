@@ -7,51 +7,26 @@
 
 int main( int argc, char *argv[] ) {
 
-  char *host;
-  /* if (argc != 2 ) { */
-  /*   printf("host not specified, conneting to 127.0.0.1\n"); */
-  /*   host = "127.0.0.1"; */
-  /* } */
-  /* else */
+    char *host;
     host = argv[1];
-  
-  int sd;
 
-  sd = client_connect( host, atoi(argv[2]) );
+    int sd;
 
-  char buffer[MESSAGE_BUFFER_SIZE];
+    sd = client_connect( host, atoi(argv[2]) );
 
-  double * buf;
-  
-  while(1){
-    while(read( sd, buf, sizeof(double))){
+    char buffer[MESSAGE_BUFFER_SIZE];
 
-      printf( "received: %lf\n", *buf);
-      sleep(0.5);
-      /* printf("enter message: "); */
-      /* fgets( buffer, sizeof(buffer), stdin ); */
-      /* char *p = strchr(buffer, '\n'); */
-      /* *p = 0; */
-      
-      /* write( sd, buffer, sizeof(buffer) ); */
+    double * buf;
+
+    while(1){
+        while(read( sd, buf, sizeof(double))){
+
+            printf( "received: %lf\n", *buf);
+            sleep(0.5);
+        }
     }
 
-    /* if(write(sd, buffer, sizeof(buffer) == -1){ */
-    /* 	printf("do you want to continue?: "); */
-    /* 	fgets( buffer, sizeof(buffer), stdin ); */
-    /* 	char *p = strchr(buffer, '\n'); */
-    /* 	*p = 0;	 */
-    /*   } */
 
 
-    /* printf("enter message: "); */
-    /* fgets( buffer, sizeof(buffer), stdin ); */
-    /* char *p = strchr(buffer, '\n'); */
-    /* *p = 0; */
-     
-  }
-
-
-  
-  return 0;
+    return 0;
 }
