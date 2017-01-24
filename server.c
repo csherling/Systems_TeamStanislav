@@ -115,7 +115,7 @@ int main() {
       printf("Please Re-enter an allowed number.\n");
     }
   }//specify amount of players and initiate connections.
-    
+
   printf("Initiating display connection\n");
   fflush(stdout);
   int sd[2];
@@ -125,7 +125,7 @@ int main() {
   sd[1] = 0;
   connection[0] = 0;
   connection[1] = 0;
-  
+
   int client = 1;//list of client pids
 
   char buffer[MESSAGE_BUFFER_SIZE];
@@ -150,13 +150,13 @@ int main() {
   sd[1] = server_setup(dport2);
   connection[1] = server_connect( sd[1] );
   printf("display 2 connected\n");
-   
+
 
   client = fork();
   /* if(client){ */
   /*   conclient = fork(); */
   /* } */
-  
+
   if ( client == 0 ) {
     while(1){
       sleep(1);
@@ -171,33 +171,22 @@ int main() {
     close(sd[1]);
     exit(0);
   }
-  /* else if(conclient==0){ */
     while (1) {
       sleep(1);
-      read(conconnection[0], tmp, 10);
-      p1.velocity = atof(tmp);
-      read(conconnection[0], tmp1, 10);
-      p1.theta = atof(tmp1);
-      read(conconnection[0], tmp2, 10);
-      p1.distance = atof(tmp2);
+      read(conconnection[0], &p1, sizeof(p1));
       *shmem1 = p1.velocity;
       printf("GOT: %lf, %lf, %lf\n", p1.velocity, p1.theta, p1.distance);
-      read(conconnection[1], tmp3, 10);
-      p2.velocity = atof(tmp3);
-      read(conconnection[1], tmp4, 10);
-      p2.theta = atof(tmp4);
-      read(conconnection[1], tmp5, 10);
-      p2.distance = atof(tmp5);
+      read(conconnection[0], &p2, sizeof(p2));
       *shmem2 = p2.velocity;
       printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
-    }    
+    }
     printf("Exiting controller reader\n");
     fflush(stdout);
     close(consd[0]);
     close(consd[1]);
     exit(0);
 /* } */
- 
+
   return 0;
 }
 
@@ -206,7 +195,7 @@ void sub_server( int sd, int sbuff, double * shmem ) {
   printf("GOT HERE\n");
   printf("%lf\n", *shmem);
   fflush(stdout);
-  write( sd, shmem, sbuff);    
+  write( sd, shmem, sbuff);
 }
 void process( char * s ) {
 

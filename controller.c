@@ -16,7 +16,7 @@ int main( int argc, char *argv[] ) {
   printf("memes\n");
   fflush(stdout);
   host = argv[1];
-  
+
   printf("memes\n");
   fflush(stdout);
   int sd;
@@ -28,17 +28,17 @@ int main( int argc, char *argv[] ) {
   printf("memes\n");
   fflush(stdout);
   char buffer[MESSAGE_BUFFER_SIZE];
-  
+
   printf("memes\n");
   fflush(stdout);
-  
+
   int msgsize = 0;
   int i = 0;
 
   char* distance;
   char velocity[10];
   char theta[10];
-  
+
   while (1) {
     printf("enter message: ");
     fflush(stdout);
@@ -47,19 +47,14 @@ int main( int argc, char *argv[] ) {
     distance=buffer;
     strcpy(velocity,strsep(&distance, ","));
     strcpy(theta,strsep(&distance, ","));
-    /* shot s; */
-    /* s.velocity=atof(velocity); */
-    /* s.theta=atof(theta); */
-    /* s.distance=atof(distance); */
-    /* for(msgsize = 0; buffer[msgsize]; msgsize++); */
-    write( sd, velocity, 10 );
-    write( sd, theta, 10 );
-    write( sd, distance, 10 );
-    printf("Sent: %s %s %s \n", velocity, theta, distance);
-    /* for(i = 0; i < MESSAGE_BUFFER_SIZE; i++){ */
-    /*   buffer[i] = 0; */
-    /* } */
+    shot s;
+    s.velocity=atof(velocity);
+    s.theta=atof(theta);
+    s.distance=atof(distance);
+    write(sd, &s, sizeof(s));
+    printf("%lf, %lf, %lf -- vel, theta, dist\n", s.velocity, s.theta, s.distance);
+    printf("Stringy: %s, %s, %s -- vel, theta, dist\n", velocity, theta, distance);
   }
-  
+
   return 0;
 }
