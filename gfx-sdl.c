@@ -16,7 +16,7 @@ int clear(SDL_Renderer* renderer) {
 void draw_man(SDL_Renderer* renderer, int x, int y) {
     SDL_Rect rect;
     rect.x = x - MAN_WIDTH / 2;
-    rect.y = SCREEN_HEIGHT - y - 2 * MAN_HEIGHT;
+    rect.y = SCREEN_HEIGHT - y - MAN_HEIGHT;
     rect.w = MAN_WIDTH;
     rect.h = MAN_HEIGHT;
     SDL_SetRenderDrawColor(renderer, MAN_R, MAN_G, MAN_B, 255);
@@ -47,7 +47,6 @@ void draw_terrain(SDL_Renderer* renderer, seed s) {
     for (x = 0; x < SCREEN_WIDTH; x+=1) {
         int y = (int) getTerrain(((double) x) * 0.1, s) / 10 + 40;
         y = fmax(0.0, y);
-        printf("Terrain X,Y: %d, %d\n", x, y);
         SDL_RenderDrawLine(renderer, prevX, SCREEN_HEIGHT - prevY, x, SCREEN_HEIGHT - y);
         prevX = x;
         prevY = y;

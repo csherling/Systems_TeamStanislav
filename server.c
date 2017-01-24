@@ -182,20 +182,20 @@ int main() {
     /*   conclient = fork(); */
     /* } */
 
-    if ( client == 0 ) {
-        while(1){
-            sleep(1);
-            sub_server( connection[0], sizeof(double), shmem1);
-            sub_server( connection[0], sizeof(double), shmem2);
-            sub_server( connection[1], sizeof(double), shmem1);
-            sub_server( connection[1], sizeof(double), shmem2);
-        }
-        printf("Exiting client writer\n");
-        fflush(stdout);
-        close(sd[0]);
-        close(sd[1]);
-        exit(0);
-    }
+    //if ( client == 0 ) {
+    //    while(1){
+    //        sleep(0.01);
+    //        sub_server( connection[0], sizeof(double), shmem1);
+    //        sub_server( connection[0], sizeof(double), shmem2);
+    //        sub_server( connection[1], sizeof(double), shmem1);
+    //        sub_server( connection[1], sizeof(double), shmem2);
+    //    }
+    //    printf("Exiting client writer\n");
+    //    fflush(stdout);
+    //    close(sd[0]);
+    //    close(sd[1]);
+    //    exit(0);
+    //}
     //RUNS GAME
     player p1;
     p1.xcor = 0;
@@ -222,6 +222,8 @@ int main() {
         while(arrow1.y>=0+getTerrain(arrow1.x, s)){
             shootStep(&p1,&p2, &arrow1, s, &currentdata);
             *shmem1 = currentdata;
+            sub_server( connection[0], sizeof(gamedata), shmem1);
+            sub_server( connection[1], sizeof(gamedata), shmem1);
             printdata(currentdata);
         }
         if(signum(arrow1.vx)*(p2.xcor - arrow1.x)<0){
@@ -241,6 +243,8 @@ int main() {
             while(arrow2.y>=0+getTerrain(arrow2.x, s)){
                 shootStep(&p2,&p1, &arrow2, s, &currentdata);
                 *shmem2 = currentdata;
+                sub_server( connection[0], sizeof(gamedata), shmem2);
+                sub_server( connection[1], sizeof(gamedata), shmem2);
             }
             if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
                 overshoot(fabs(arrow2.x - p1.xcor));

@@ -65,7 +65,7 @@ int shootStep(
 	      seed s,
 	      gamedata *data
 	      ) {
-  arrow->vy-=GRAVITY*.01;
+  arrow->vy-=GRAVITY*.002;
   arrow->x+=arrow->vx*.01;
   arrow->y+=arrow->vy*.01;
   data->ar=*arrow;
