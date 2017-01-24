@@ -34,7 +34,7 @@ void playGame(){
     //end input stuff
     arrow arrow1 = make_arrow(atof(velocity), atof(theta)*M_PI/180);
     move(&p1, atof(distance));
-    shoot(&p1, &p2, &arrow1, s);
+    //shoot(&p1, &p2, &arrow1, s);
     //2 player shoots
     //input stuff
     printf("Enter Shot:\n");
@@ -46,7 +46,7 @@ void playGame(){
     //end input stuff
     arrow arrow2 = make_arrow(atof(velocity), (180 - atof(theta)) *M_PI/180);
     move(&p2, -atof(distance));
-    shoot(&p2, &p1, &arrow2, s);
+    //shoot(&p2, &p1, &arrow2, s);
   }
 }
 

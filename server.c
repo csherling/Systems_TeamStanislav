@@ -182,6 +182,7 @@ int main() {
   p2.xcor = DISTANCE;
   p2.health = START_HEALTH;
   seed s;
+  gamedata currentdata;
   setSeeds(&s);
   printf("OY WHATS GOING ON\n");
   display(0,1,s);
@@ -196,7 +197,8 @@ int main() {
     arrow1.x = p1.xcor;
     arrow1.y = PLAYER_HEIGHT+getTerrain(p1.xcor, s);
     while(arrow1.y>=0+getTerrain(arrow1.x, s)){
-      shootStep(&p2, &arrow1, s);
+      shootStep(&p1,&p2, &arrow1, s, &currentdata);
+      printdata(currentdata);
     }
     if(signum(arrow1.vx)*(p2.xcor - arrow1.x)<0){
       overshoot(fabs(arrow1.x - p2.xcor));
@@ -213,7 +215,7 @@ int main() {
     arrow2.x = p2.xcor;
     arrow2.y = PLAYER_HEIGHT+getTerrain(p2.xcor, s);
     while(arrow2.y>=0+getTerrain(arrow2.x, s)){
-      shootStep(&p1, &arrow2, s);
+      shootStep(&p2,&p1, &arrow2, s, &currentdata);
     }
     if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
       overshoot(fabs(arrow2.x - p1.xcor));

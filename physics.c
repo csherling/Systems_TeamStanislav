@@ -37,7 +37,7 @@ arrow make_arrow(double v, double angle) {
  Returns:
  1-Hit
  0-Miss
- */
+ 
 char shoot(
         player *shooter,
         player *target,
@@ -56,16 +56,21 @@ char shoot(
     undershoot(fabs(target->xcor - arrow->x));
   }
   return 0;
-}
+}*/
 
 int shootStep(
+	      player *shooter,
 	      player *target,
 	      arrow *arrow,
-	      seed s
+	      seed s,
+	      gamedata *data
 	      ) {
   arrow->vy-=GRAVITY*.01;
   arrow->x+=arrow->vx*.01;
   arrow->y+=arrow->vy*.01;
+  data->ar=*arrow;
+  data->player1=*shooter;
+  data->player2=*target;
   processCor(arrow->x, arrow->y,atan2(arrow->vy, arrow->vx));
   if(arrow->x >= target->xcor && arrow->x <= target->xcor + PLAYER_WIDTH){
     if(arrow->y<=PLAYER_HEIGHT+getTerrain(target->xcor, s)){
@@ -175,6 +180,11 @@ void processTerrain(double x, double y){
   printf("(%f,%f\n)",x,y);
 }
 
+void printdata(gamedata g){
+  printf("P1: %f\n",g.player1.xcor);
+  printf("P2: %f\n",g.player2.xcor);
+  printf("ARROW: %f %f %f %f\n",g.ar.x, g.ar.y, g.ar.vx, g.ar.vy);
+}
 //display displays the terrain initially. It uses the current computer to determine what piece of the terrain to display
 void display(char comp, char numcoms, seed s){
   double xi = (double)comp*DISTANCE/numcoms;

@@ -31,7 +31,7 @@ typedef struct gamedata {
 
 arrow make_arrow(double v, double angle);
 char shoot(player *shooter, player *target, arrow *arrow, seed s);
-int shootStep(player *target, arrow *arrow, seed s);
+int shootStep(player *shooter, player *target, arrow *arrow, seed s, gamedata *data);
 void move(player *shooter, double distance);
 void processCor(double x, double y, double theta);
 void killplayer(player *p);
@@ -40,5 +40,7 @@ void undershoot(int distance);
 void setSeeds(seed *s);
 double getTerrain(double x, seed s1);
 void processTerrain(double x, double y);
+void printdata(gamedata g);
 void display(char comp, char numcoms, seed s);
+
 #endif
