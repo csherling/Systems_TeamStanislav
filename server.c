@@ -112,8 +112,7 @@ int main() {
             conconnection[0] = server_connect( consd[0] );
             printf("Player controller connected!\n");
             break;
-        }
-        else if(numplz == 2){
+        } else if(numplz == 2){
             printf("Initiating 2 player mode. Please connect a controlling device.\n");
             printf("Specify P1 Port: \n");
             fgets( p1port, sizeof(p1port), stdin );
@@ -207,6 +206,7 @@ int main() {
     seed s;
     gamedata currentdata;
     setSeeds(&s);
+    currentdata.terrain_seed = s;
     printf("OY WHATS GOING ON\n");
     display(0,1,s);
     while (p1.health>0&&p2.health>0) {
