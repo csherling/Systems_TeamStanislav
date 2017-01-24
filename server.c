@@ -25,7 +25,7 @@ static void sighandler(int signo){
 }
 
 void process( char * s );
-void sub_server( int sd, int sbuff, double * shmem );
+void sub_server( int sd, int sbuff, gamedata * shmem );
 int createShmemP1();
 int createShmemP2();
 int removeShmemP1();
@@ -260,7 +260,7 @@ int main() {
 }
 
 
-void sub_server( int sd, int sbuff, double * shmem ) {
+void sub_server( int sd, int sbuff, gamedata * shmem ) {
   printf("GOT HERE\n");
   printf("%lf\n", *shmem);
   fflush(stdout);
