@@ -28,6 +28,7 @@ typedef struct gamedata {
     seed terrain_seed;
     player player1;
     player player2;
+    int display_index;
 } gamedata;
 
 arrow make_arrow(double v, double angle);

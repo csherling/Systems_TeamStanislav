@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <SDL.h>
 #include <math.h>
 #include <string.h>
 #include <time.h> //does time exist tho?
+#include "constants.h"
 #include "physics.h"
-#include "gfx-sdl.h"
 
 double signum(double x) {
     if (x > 0.0) {
