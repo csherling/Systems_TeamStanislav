@@ -192,14 +192,34 @@ int main() {
       printf("GOT: %lf, %lf, %lf\n", shot1.velocity, shot1.theta, shot1.distance);
       arrow arrow1 = make_arrow(shot1.velocity, shot1.theta*M_PI/180);
       move(&p1, shot1.distance);
-      shoot(&p1, &p2, &arrow1, s);
+      //shoot(&p1, &p2, &arrow1, s);
+    arrow1.x = p1.xcor;
+    arrow1.y = PLAYER_HEIGHT+getTerrain(p1.xcor, s);
+    while(arrow1.y>=0+getTerrain(arrow1.x, s)){
+      shootStep(&p2, &arrow1, s);
+    }
+    if(signum(arrow1.vx)*(p2.xcor - arrow1.x)<0){
+      overshoot(fabs(arrow1.x - p2.xcor));
+    }else{
+      undershoot(fabs(p2.xcor - arrow1.x));
+    }
       if (conconnection[1]) {
           read(conconnection[1], &shot2, sizeof(shot2));
           *shmem2 = shot2.velocity;
           printf("GOT: %lf, %lf, %lf\n", shot2.velocity, shot2.theta, shot2.distance);
       arrow arrow2 = make_arrow(shot2.velocity, (180 - shot2.theta) *M_PI/180);
       move(&p2, -shot2.distance);
-      shoot(&p2, &p1, &arrow2, s);
+      //shoot(&p2, &p2, &arrow2, s);
+    arrow2.x = p2.xcor;
+    arrow2.y = PLAYER_HEIGHT+getTerrain(p2.xcor, s);
+    while(arrow2.y>=0+getTerrain(arrow2.x, s)){
+      shootStep(&p1, &arrow2, s);
+    }
+    if(signum(arrow2.vx)*(p2.xcor - arrow2.x)<0){
+      overshoot(fabs(arrow2.x - p1.xcor));
+    }else{
+      undershoot(fabs(p1.xcor - arrow2.x));
+    }      
       }
     }
     printf("Exiting controller reader\n");
