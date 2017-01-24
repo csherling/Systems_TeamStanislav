@@ -4,6 +4,7 @@
 #include <SDL_keyboard.h>
 #include <SDL_keycode.h>
 
+#include "constants.h"
 #include "physics.h"
 #include "gfx-sdl.h"
 
