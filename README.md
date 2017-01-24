@@ -20,7 +20,9 @@
 6. On the server terminal enter a port for the second client, and repeat step 5, this time using the new port
 7. Enter commands into the "controller" terminals following the prompts. As a reminder the format for inputs is "<velocity>,<angle>,<distance>" where velocity and angle are in regard to the arrow, and distance is how far you wish the player to move.
 
-The maroon rectangles are archers.
+##Notes
++ The maroon rectangles are archers.
++ We ran in to numerous technical difficulties which took up too much time. One notable one was fgets, getc, fgetc, and getchar not waiting for input and just skipping over.
 
 # List of files:
 + .gitignore
