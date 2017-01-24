@@ -8,7 +8,8 @@
 #include <sys/sem.h>
 #include <sys/shm.h>
 #include <string.h>
-
+#include <math.h>
+#include "physics.h"
 #include "networking.h"
 
 static void sighandler(int signo){
@@ -45,8 +46,8 @@ int main() {
   char disp5port[6];
   char disp6port[6];
   char *z;
-  shot p1;
-  shot p2;
+  shot shot1;
+  shot shot2;
   char tmp[10];
   char tmp1[10];
   char tmp2[10];
@@ -171,15 +172,30 @@ int main() {
     close(sd[1]);
     exit(0);
   }
-    while (1) {
-      sleep(1);
-      read(conconnection[0], &p1, sizeof(p1));
-      *shmem1 = p1.velocity;
-      printf("GOT: %lf, %lf, %lf\n", p1.velocity, p1.theta, p1.distance);
+  //RUNS GAME
+  player p1;
+  p1.xcor = 0;
+  p1.health = START_HEALTH;
+  player p2;
+  p2.xcor = DISTANCE;
+  p2.health = START_HEALTH;
+  seed s;
+  setSeeds(&s);
+  while (p1.health>0&&p2.health>0) {
+    sleep(1);
+      read(conconnection[0], &shot1, sizeof(shot1));
+      *shmem1 = shot1.velocity;
+      printf("GOT: %lf, %lf, %lf\n", shot1.velocity, shot1.theta, shot1.distance);
+      arrow arrow1 = make_arrow(shot1.velocity, shot1.theta*M_PI/180);
+      move(&p1, shot1.distance);
+      shoot(&p1, &p2, &arrow1, s);
       if (conconnection[1]) {
-          read(conconnection[1], &p2, sizeof(p2));
-          *shmem2 = p2.velocity;
-          printf("GOT: %lf, %lf, %lf\n", p2.velocity, p2.theta, p2.distance);
+          read(conconnection[1], &shot2, sizeof(shot2));
+          *shmem2 = shot2.velocity;
+          printf("GOT: %lf, %lf, %lf\n", shot2.velocity, shot2.theta, shot2.distance);
+      arrow arrow2 = make_arrow(shot2.velocity, (180 - shot2.theta) *M_PI/180);
+      move(&p2, -shot2.distance);
+      shoot(&p2, &p1, &arrow2, s);
       }
     }
     printf("Exiting controller reader\n");
