@@ -39,6 +39,7 @@ int main( int argc, char *argv[] ) {
             if (read( sd, &buffer, sizeof(buffer))){
                 printf("recieved game update:\n");
                 sleep(0.03);
+                break;
             }
         }
         clear(renderer);

@@ -223,7 +223,7 @@ int main() {
         //shoot(&p1, &p2, &arrow1, s);
         arrow1.x = p1.xcor;
         arrow1.y = PLAYER_HEIGHT+getTerrain(p1.xcor, s);
-        while(arrow1.y>=0){//+getTerrain(arrow1.x, s)){
+        while(arrow1.y>=0+getTerrain(arrow1.x, s)){
             shootStep(&p1,&p2, &arrow1, s, &currentdata);
             *shmem1 = currentdata;
             sub_server( connection[0], sizeof(gamedata), shmem1);
