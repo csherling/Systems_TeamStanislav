@@ -37,15 +37,15 @@ int main( int argc, char *argv[] ) {
                 break;
             }
             if (read( sd, &buffer, sizeof(buffer))){
-                printf("recieved game update\n");
+                printf("recieved game update:\n");
                 sleep(0.5);
             }
         }
         clear(renderer);
         draw_terrain(renderer, buffer.terrain_seed);
-        double p1_y;
+        double p1_y = getTerrain(buffer.player1.xcor, buffer.terrain_seed);
         draw_man(renderer, buffer.player1.xcor, p1_y);
-        double p2_y;
+        double p2_y = getTerrain(buffer.player2.xcor, buffer.terrain_seed);
         draw_man(renderer, buffer.player2.xcor, p2_y);
         draw_arrow(renderer, buffer.ar.x, buffer.ar.y, atan2(buffer.ar.vy, buffer.ar.vx));
         // Update screen
