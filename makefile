@@ -3,8 +3,8 @@ SDL_LDFLAGS := $(shell sdl2-config --libs)
 CC := gcc
 all: server client graphic-client controller game
 
-server: server.o networking.o
-	gcc -o server server.o networking.o
+server: server.o networking.o physics.o
+	gcc -o server server.o networking.o physics.o -lm
 
 client: client.o networking.o
 	gcc -o client client.o networking.o
