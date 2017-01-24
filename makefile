@@ -1,7 +1,7 @@
 SDL_CFLAGS := $(shell sdl2-config --cflags)
 SDL_LDFLAGS := $(shell sdl2-config --libs)
 CC := gcc
-all: server client graphic-client controller game
+all: server client controller game graphic-client
 
 server: server.o networking.o physics.o
 	gcc -o server server.o networking.o physics.o -lm
@@ -27,7 +27,7 @@ controller.o: controller.c networking.h
 networking.o: networking.c networking.h
 	gcc -c networking.c
 
-game: clean game.c
+game: game.c
 	$(CC) physics.c game.c -o game -lm
 
 physics.o: physics.c
